@@ -1,8 +1,11 @@
-short_name = "WordCount"
-long_name = "Word Count"
-description = "Number of words in the sample."
+from LinguisticFeature import *
 
-plain_text = False
+class WordCount(LinguisticFeature):
+    _short_name = "WordCount"
+    _long_name = "Word Count"
+    _description = "Number of words in the sample."
 
-def extract(sample):
-    return len(sample)
+    _plain_text = False
+
+    def extract(sample):
+        return len(sample)

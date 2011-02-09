@@ -1,22 +1,26 @@
-short_name = "PunctCount"
-long_name = "Punctuation Count"
-description = "Number of each type of punctuation in the sample."
+from LinguisticFeature import *
 
-plain_text = False
+class PunctCount(LinguisticFeature):
+    _short_name = "PunctCount"
+    _long_name = "Punctuation Count"
+    _description = "Number of each type of punctuation in the sample."
 
-__punctuation__ = {
-    "PunctPeriod" : ".",
-    "PunctComma" : ",",
-    "PunctExclamation" : "!",
-    "PunctQuestion" : "?",
-}
+    _plain_text = False
 
-def extract(sample):
-    rVal = {}
+    __punctuation__ = {
+        "PunctPeriod" : ".",
+        "PunctComma" : ",",
+        "PunctExclamation" : "!",
+        "PunctQuestion" : "?",
+    }
 
-    sample_length = len(sample)
+    def extract(sample):
+        rVal = {}
 
-    for key, value in __punctuation__.items():
-        rVal[key] = round((float(sample.count(value)) / sample_length) * 100, 2)
+        sample_length = len(sample)
 
-    return rVal
+        for key, value in __punctuation__.items():
+            rVal[key] = round((float(sample.count(value)) / 
+                              sample_length) * 100, 2)
+
+        return rVal

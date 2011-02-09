@@ -1,8 +1,12 @@
-short_name = "CharCount"
-long_name = "Character Count"
-description = "Number of characters in the sample."
+from LinguisticFeature import *
 
-plain_text = True
+class CharCount(LinguisticFeature):
+    _short_name = "CharCount"
+    _long_name = "Character Count"
+    _description = "Number of characters in the sample."
 
-def extract(sample):
-    return len(sample)
+    _plain_text = True
+
+    def extract(sample):
+        return len(sample)
+
