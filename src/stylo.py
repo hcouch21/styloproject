@@ -14,4 +14,4 @@ if __name__ == "__main__":
 
     print "Installed features:"
     for feature in FeatureFactory.get_installed_features():
-			print FeatureFactory.get_feature(feature).get_long_name()
+      print FeatureFactory.get_feature(feature).get_long_name()
