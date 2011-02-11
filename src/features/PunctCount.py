@@ -14,7 +14,7 @@ class PunctCount(LinguisticFeature):
         "PunctQuestion" : "?",
     }
 
-    def extract(sample):
+    def extract(self, sample):
         rVal = {}
 
         sample_length = len(sample)

@@ -7,6 +7,6 @@ class CharCount(LinguisticFeature):
 
     _plain_text = True
 
-    def extract(sample):
+    def extract(self, sample):
         return len(sample)
 

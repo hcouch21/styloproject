@@ -7,5 +7,5 @@ class WordCount(LinguisticFeature):
 
     _plain_text = False
 
-    def extract(sample):
+    def extract(self, sample):
         return len(sample)
