@@ -41,6 +41,36 @@ class PluginManager(object):
             del self._plug_ins[plugin]
             del pi
 
+    def on_stylo_start(self, state):
+        pass
+
+    def on_stylo_stop(self, state):
+        pass
+
+    def on_extract_start(self, state):
+        pass
+
+    def on_extract_stop(self, state):
+        pass
+
+    def on_feature_start(self, state):
+        pass
+
+    def on_feature_stop(self, state):
+        pass
+
+    def on_classify_start(self, state):
+        pass
+
+    def on_classify_stop(self, state):
+        pass
+
+    def on_train_start(self, state):
+        pass
+
+    def on_train_stop(self, state):
+        pass
+
     def __str__(self):
         rVal = ""
 
