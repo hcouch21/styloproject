@@ -9,8 +9,8 @@ class OrangeAdaptor(PlugIn, ClassifyStart, TrainStart):
         hooks[Hooks.CLASSIFYSTART].remove(self)
         hooks[Hooks.TRAINSTART].append(self)
 
-    def run_classify_start_action(self, sample, corpus):
+    def run_classify_start_action(self, state, manager):
         print "Classification started..."
 
-    def run_train_start_action(self, corpus):
+    def run_train_start_action(self, state, manager):
         print "Training started..."
