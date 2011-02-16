@@ -15,7 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Stylo.  If not, see <http://www.gnu.org/licenses/>.
 
-from PluginManager import *
+from PlugInManager import *
 from FeatureFactory import *
 
 import sys
