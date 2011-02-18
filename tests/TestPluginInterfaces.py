@@ -28,10 +28,6 @@ class  PluginInterfacesTestCase(unittest.TestCase):
     #    self.foo = None
 
     def test_pluginInterfaces(self):
-        #assert x != y;
-        #self.assertEqual(x, y, "Msg");
-        #self.fail("TODO: Write test")
-
         plugins = os.listdir("src/plugins/")
         plugins.remove("__init__.py")
 
@@ -39,9 +35,10 @@ class  PluginInterfacesTestCase(unittest.TestCase):
             mod = imp.load_source(pi_name, "src/plugins/%s/%s.py" % (pi_name, pi_name))
             pi = getattr(mod, pi_name)()
 
-            # Test that each method is implemented that is required by the interface
-            #  Can't do that now as we need a corpus to use for tests so just fail
-            self.fail(pi.__class__.__bases__)
+            members = dir(pi)
+
+            self.assertTrue("register" in members, "PlugIn (%s) is missing function: register" % pi_name)
+            self.assertTrue("unregister" in members, "PlugIn (%s) is missing function: unregister" % pi_name)
 
 if __name__ == '__main__':
     unittest.main()
