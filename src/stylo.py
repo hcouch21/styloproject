@@ -15,6 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Stylo.  If not, see <http://www.gnu.org/licenses/>.
 
+from Domain import *
 from PlugInManager import *
 from FeatureFactory import *
 
@@ -39,7 +40,14 @@ class StyloCLI(object):
         sample = None
 
         if options.corpus:
-            corpus = options.corpus
+            for c in Corpus.get_all_corpora():
+                if c.name == options.corpus:
+                    corpus = c
+                    break
+            
+            if corpus is None:
+                print "Could not find corpus with name: %s" % options.corpus
+                sys.exit(1)
         
         if options.list_features:
             # BAD - We need a new hook "ListFeature" and this would go in there

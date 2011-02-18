@@ -45,7 +45,7 @@ class Corpus(object):
         pass
 
     @staticmethod
-    def load_all_corpora():
+    def get_all_corpora():
         avail_corpora = []
         corpora_names = os.listdir("./corpora/")
 
