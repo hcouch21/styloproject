@@ -13,12 +13,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Stylo.  If not, see <http://www.gnu.org/licenses
 
+import os
+
 try:
     import Crypto
 except:
     print "PyCrypto not installed, corpus encryption is not available"
 
-def Corpus(object):
+class Corpus(object):
     """Stores data about a corpus"""
 
     name = None
@@ -26,8 +28,9 @@ def Corpus(object):
     uses_encryption = False
     path = None
     
-    def __init__(self, path):
-        pass
+    def __init__(self, name):
+        self.name = name
+        self.path = "./corpora/%s" % name
 
     def load(self, path, password):
         pass
@@ -41,12 +44,22 @@ def Corpus(object):
     def _decrypt(self, password):
         pass
 
-def Sample(object):
+    @staticmethod
+    def load_all_corpora():
+        avail_corpora = []
+        corpora_names = os.listdir("./corpora/")
+
+        for name in corpora_names:
+            avail_corpora.append(Corpus(name))
+
+        return avail_corpora
+
+class Sample(object):
     """Stores data and state of a sample document"""
 
     feature_results = None
 
-def FeatureResult(object):
+class FeatureResult(object):
     """Stores the value after a linguistic feature is extracted
     name -- The name of the feature this result belongs to
     value -- The actual extracted value
