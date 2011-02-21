@@ -19,6 +19,7 @@ from Domain import *
 from PlugInManager import *
 from FeatureFactory import *
 
+import os
 import sys
 
 from optparse import OptionParser
@@ -48,6 +49,12 @@ class StyloCLI(object):
             if corpus is None:
                 print "Could not find corpus with name: %s" % options.corpus
                 sys.exit(1)
+
+        if options.input:
+            if os.path.exists(options.input):
+                sample = options.input
+            else:
+                print "Could not find file or path: %s" % options.input
         
         if options.list_features:
             # BAD - We need a new hook "ListFeature" and this would go in there
