@@ -15,7 +15,7 @@
 
 import sys
 
-from FeatureFactory import *
+from plugins.FeatureExtractor.FeatureFactory import *
 from PlugInInterface import *
 
 class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
