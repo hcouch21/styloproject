@@ -13,6 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Stylo.  If not, see <http://www.gnu.org/licenses/>.
 
+from Domain import FeatureResult
 from LinguisticFeature import *
 
 class CharCount(LinguisticFeature):
@@ -20,8 +21,9 @@ class CharCount(LinguisticFeature):
     _long_name = "Character Count"
     _description = "Number of characters in the sample."
 
-    _plain_text = True
-
     def extract(self, sample):
-        return len(sample)
+        result = FeatureResult(self._short_name)
+        result.value = len(sample.plain_text)
+
+        return [result]
 

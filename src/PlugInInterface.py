@@ -60,12 +60,25 @@ class TrainStop(object):
     def run_train_stop_action(self, state, manager):
         raise NotImplementedError()
 
+class ListFeatures(object):
+    def run_list_features_action(self, state, manager):
+        raise NotImplementedError()
+
 class RunState(object):
     training = None
 
     corpus = None
-    sample = None
 
+    # Samples that still need extraction
+    to_extract = None
+    # Samples already extracted
+    extracted = None
+
+    # List of available features
+    available_features = None
+    # List of features to extract
+    features_to_extract = None
+    # The current feature we're extracting
     current_feature = None
 
 class Hooks(object):
@@ -79,3 +92,10 @@ class Hooks(object):
     CLASSIFYSTOP = "ClassifyStop"
     TRAINSTART = "TrainStart"
     TRAINSTOP = "TrainStop"
+    LISTFEATURES = "ListFeatures"
+
+    functions = {
+        EXTRACTSTART : "run_extract_start_action",
+        TRAINSTART : "run_train_start_action",
+        LISTFEATURES : "run_list_features_action",
+    }

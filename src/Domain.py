@@ -13,12 +13,19 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Stylo.  If not, see <http://www.gnu.org/licenses
 
+import sys
 import os
 
 try:
     import Crypto
 except:
     print "PyCrypto not installed, corpus encryption is not available"
+
+try:
+    import nltk
+except:
+    print "NLTK must be installed for Stylo to run."
+    sys.exit(1)
 
 class Corpus(object):
     """Stores data about a corpus"""
@@ -30,12 +37,25 @@ class Corpus(object):
     
     def __init__(self, name):
         self.name = name
-        self.path = "./corpora/%s" % name
+        self.path = "./corpora/%s/" % name
+        self.authors = []
 
-    def load(self, path, password):
-        pass
+    def load(self, password=None):
+        author_names = os.listdir(self.path)
 
-    def save(self, password):
+        try:
+            author_names.remove("stylo")
+        except ValueError:
+            os.mkdir(self.path + "stylo/")
+
+        for name in author_names:
+            author = Author(self.path, name)
+            self.authors.append(author)
+
+    def __str__(self):
+        return "%s - %d authors" % (self.name, len(self.authors))
+
+    def save(self, password=None):
         pass
 
     def _encrypt(self, password):
@@ -54,10 +74,41 @@ class Corpus(object):
 
         return avail_corpora
 
+class Author(object):
+    name = None
+    path = None
+    samples = None
+
+    def __init__(self, path, name):
+        self.name = name
+        self.path = path + name + "/"
+        self.samples = []
+
+        #print "Loading author: %s" % self.path
+        for sample_file in os.listdir(self.path):
+            self.samples.append(Sample(self.path, sample_file))
+
+    def __str__(self):
+        return "%s - %d samples" % (self.name, len(self.samples))
+
 class Sample(object):
     """Stores data and state of a sample document"""
 
+    name = None
+    path = None
     feature_results = None
+
+    plain_text = None
+    nltk_text = None
+
+    def __init__(self, path, name):
+        self.name = name
+        self.path = path + name
+
+        with open(self.path, "r") as f:
+            self.plain_text = f.read()
+
+        self.nltk_text = nltk.Text(nltk.word_tokenize(self.plain_text))
 
 class FeatureResult(object):
     """Stores the value after a linguistic feature is extracted

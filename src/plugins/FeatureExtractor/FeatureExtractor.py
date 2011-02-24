@@ -13,17 +13,36 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Stylo.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
+
+from FeatureFactory import *
 from PlugInInterface import *
 
-class FeatureExtractor(PlugIn, ExtractStart):
+class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
     def register(self, hooks):
         hooks[Hooks.EXTRACTSTART].append(self)
+        hooks[Hooks.LISTFEATURES].append(self)
 
     def unregister(self, hooks):
         hooks[Hooks.EXTRACTSTART].remove(self)
+        hooks[Hooks.LISTFEATURES].remove(self)
     
     def run_extract_start_action(self, state, manager):
-        print "Feature extraction started..."
+        # If no features specified, use them all
+        if state.features_to_extract is None:
+            state.features_to_extract = []
 
+            for feature_name in FeatureFactory.get_installed_features():
+                state.features_to_extract.append(feature_name)
+
+        for sample in state.to_extract:
+            sample.feature_results = []
+            
+            for feature_name in state.features_to_extract:
+                state.current_feature = feature_name
+                feature = FeatureFactory.get_feature(feature_name)
+                sample.feature_results.extend(feature.extract(sample))
+
+    def run_list_features_action(self, state, manager):
         for feature in FeatureFactory.get_installed_features():
             print FeatureFactory.get_feature(feature).get_long_name()
