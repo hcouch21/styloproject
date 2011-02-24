@@ -13,6 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Stylo.  If not, see <http://www.gnu.org/licenses/>.
 
+from Domain import FeatureResult
 from LinguisticFeature import *
 
 class WordCount(LinguisticFeature):
@@ -20,7 +21,8 @@ class WordCount(LinguisticFeature):
     _long_name = "Word Count"
     _description = "Number of words in the sample."
 
-    _plain_text = False
-
     def extract(self, sample):
-        return len(sample)
+        result = FeatureResult(self._short_name)
+        result.value = len(sample.nltk_text)
+
+        return [result]

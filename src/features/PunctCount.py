@@ -13,6 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Stylo.  If not, see <http://www.gnu.org/licenses/>.
 
+from Domain import FeatureResult
 from LinguisticFeature import *
 
 class PunctCount(LinguisticFeature):
@@ -20,22 +21,24 @@ class PunctCount(LinguisticFeature):
     _long_name = "Punctuation Count"
     _description = "Number of each type of punctuation in the sample."
 
-    _plain_text = False
-
-    __punctuation__ = {
-        "PunctPeriod" : ".",
-        "PunctComma" : ",",
-        "PunctExclamation" : "!",
-        "PunctQuestion" : "?",
+    _punctuation = {
+        "PunctCountPeriod" : ".",
+        "PunctCountComma" : ",",
+        "PunctCountExclamation" : "!",
+        "PunctCountQuestion" : "?",
     }
 
     def extract(self, sample):
-        rVal = {}
+        rVal = []
 
-        sample_length = len(sample)
+        sample_length = len(sample.plain_text)
 
-        for key, value in __punctuation__.items():
-            rVal[key] = round((float(sample.count(value)) / 
+        for key, value in self._punctuation.items():
+            val = round((float(sample.plain_text.count(value)) /
                               sample_length) * 100, 2)
+            result = FeatureResult(key)
+            result.value = val
+
+            rVal.append(result)
 
         return rVal

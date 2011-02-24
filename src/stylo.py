@@ -17,7 +17,7 @@
 
 from Domain import *
 from PlugInManager import *
-from FeatureFactory import *
+from PlugInInterface import *
 
 import os
 import sys
@@ -25,10 +25,12 @@ import sys
 from optparse import OptionParser
 
 class StyloCLI(object):
+    plugin_manager = None
+
     def __init__(self):
-        p = PluginManager()
-        p.load_plugin("FeatureExtractor")
-        p.load_plugin("OrangeAdaptor")
+        self.plugin_manager = PluginManager()
+        self.plugin_manager.load_plugin("FeatureExtractor")
+        self.plugin_manager.load_plugin("OrangeAdaptor")
     
     def analyze(self):
         pass
@@ -37,31 +39,37 @@ class StyloCLI(object):
         pass
 
     def parse_arguments(self, args, options):
-        corpus = None
-        sample = None
+        state = RunState()
 
         if options.corpus:
             for c in Corpus.get_all_corpora():
                 if c.name == options.corpus:
-                    corpus = c
+                    state.corpus = c
+                    state.corpus.load()
                     break
             
-            if corpus is None:
+            if state.corpus is None:
                 print "Could not find corpus with name: %s" % options.corpus
                 sys.exit(1)
 
         if options.input:
             if os.path.exists(options.input):
-                sample = options.input
+                state.sample = options.input
             else:
                 print "Could not find file or path: %s" % options.input
+
+        if options.features is not None:
+            pass
+        else:
+            pass
         
         if options.list_features:
-            # BAD - We need a new hook "ListFeature" and this would go in there
-            for feature in FeatureFactory.get_installed_features():
-                print FeatureFactory.get_feature(feature).get_long_name()
+            self.plugin_manager.fire_event(Hooks.LISTFEATURES, state)
 
             sys.exit(0)
+        elif options.train:
+            state.training = True
+            self.plugin_manager.fire_event(Hooks.TRAINSTART, state)
 
 if __name__ == "__main__":
     parser = OptionParser()
@@ -69,6 +77,7 @@ if __name__ == "__main__":
     parser.add_option("-f", "--features", help="Specify a list of features to use (semicolon delimited)")
     parser.add_option("-i", "--input", help="Path to input directory or file")
     parser.add_option("-l", "--list-features", action="store_true", help="Lists all available features")
+    parser.add_option("-t", "--train", action="store_true", help="Train Stylo against specified corpus")
 
     (options, args) = parser.parse_args()
 

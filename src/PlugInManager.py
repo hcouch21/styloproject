@@ -15,6 +15,8 @@
 
 import imp
 
+from PlugInInterface import *
+
 class PluginManager(object):
     _plug_ins = {}
     _hooks = {
@@ -32,6 +34,8 @@ class PluginManager(object):
 
         "TrainStart" : [],
         "TrainStop" : [],
+
+        "ListFeatures" : [],
     }
     
     def load_plugin(self, name):
@@ -56,35 +60,11 @@ class PluginManager(object):
             del self._plug_ins[plugin]
             del pi
 
-    def on_stylo_start(self, state):
-        pass
-
-    def on_stylo_stop(self, state):
-        pass
-
-    def on_extract_start(self, state):
-        pass
-
-    def on_extract_stop(self, state):
-        pass
-
-    def on_feature_start(self, state):
-        pass
-
-    def on_feature_stop(self, state):
-        pass
-
-    def on_classify_start(self, state):
-        pass
-
-    def on_classify_stop(self, state):
-        pass
-
-    def on_train_start(self, state):
-        pass
-
-    def on_train_stop(self, state):
-        pass
+    def fire_event(self, event, state):
+        for plugin in self._hooks[event]:
+            #plugin.run_extract_start_action(state, self)
+            event_action = getattr(plugin, Hooks.functions[event])
+            event_action(state, self)
 
     def __str__(self):
         rVal = ""
