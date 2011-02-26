@@ -1,3 +1,4 @@
+import os.path
 #    This file is part of Stylo.
 #
 #    Stylo is free software: you can redistribute it and/or modify
@@ -28,7 +29,12 @@ except:
     sys.exit(1)
 
 class Corpus(object):
-    """Stores data about a corpus"""
+    """Stores data about a corpus
+    name -- Name of the corpus (folder name)
+    authors -- List of Authors associated with corpus
+    path -- Relative path to corpus folder
+
+    """
 
     name = None
     authors = None
@@ -75,6 +81,13 @@ class Corpus(object):
         return avail_corpora
 
 class Author(object):
+    """Stores data related to an author in a corpus
+    name -- Name of the author
+    path -- Relative path to author folder
+    samples -- List of Samples associated with author
+
+    """
+
     name = None
     path = None
     samples = None
@@ -92,7 +105,14 @@ class Author(object):
         return "%s - %d samples" % (self.name, len(self.samples))
 
 class Sample(object):
-    """Stores data and state of a sample document"""
+    """Stores data and state of a sample document
+    name -- The name of the sample (filename)
+    path -- Relative path to the file (including filename)
+    feature_results -- List of FeatureResults for extracted features
+
+    plain_text -- Raw characters that make up the sample
+    nltk_text -- ntlk.Text object which is a list of tokens
+    """
 
     name = None
     path = None
@@ -101,9 +121,13 @@ class Sample(object):
     plain_text = None
     nltk_text = None
 
-    def __init__(self, path, name):
-        self.name = name
-        self.path = path + name
+    def __init__(self, path, name=None):
+        if name is not None:
+            self.name = name
+            self.path = path + name
+        else:
+            self.name = os.path.basename(path)
+            self.path = path
 
         with open(self.path, "r") as f:
             self.plain_text = f.read()

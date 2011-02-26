@@ -54,7 +54,13 @@ class StyloCLI(object):
 
         if options.input:
             if os.path.exists(options.input):
-                state.sample = options.input
+                # Directory
+                if os.path.isdir(options.input):
+                    raise NotImplementedError()
+                # File
+                else:
+                    state.to_extract = []
+                    state.to_extract.append(Sample(options.input))
             else:
                 print "Could not find file or path: %s" % options.input
 
@@ -70,6 +76,9 @@ class StyloCLI(object):
         elif options.train:
             state.training = True
             self.plugin_manager.fire_event(Hooks.TRAINSTART, state)
+        else:
+            self.plugin_manager.fire_event(Hooks.EXTRACTSTART, state)
+            self.plugin_manager.fire_event(Hooks.CLASSIFYSTART, state)
 
 if __name__ == "__main__":
     parser = OptionParser()
