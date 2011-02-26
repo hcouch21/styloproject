@@ -35,13 +35,24 @@ class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
             for feature_name in FeatureFactory.get_installed_features():
                 state.features_to_extract.append(feature_name)
 
-        for sample in state.to_extract:
+        state.extracted = []
+
+        while len(state.to_extract) != 0:
+            sample = state.to_extract.pop(0)
             sample.feature_results = []
             
             for feature_name in state.features_to_extract:
+                manager.fire_event(Hooks.FEATURESTART, state)
+
                 state.current_feature = feature_name
                 feature = FeatureFactory.get_feature(feature_name)
                 sample.feature_results.extend(feature.extract(sample))
+
+                manager.fire_event(Hooks.FEATURESTOP, state)
+
+            state.extracted.append(sample)
+
+        manager.fire_event(Hooks.EXTRACTSTOP, state)
 
     def run_list_features_action(self, state, manager):
         for feature in FeatureFactory.get_installed_features():

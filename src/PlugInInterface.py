@@ -95,7 +95,15 @@ class Hooks(object):
     LISTFEATURES = "ListFeatures"
 
     functions = {
+        STYLOSTART : "run_stylo_start_action",
+        STYLOSTOP : "run_stylo_stop_action",
         EXTRACTSTART : "run_extract_start_action",
+        EXTRACTSTOP : "run_extract_stop_action",
+        FEATURESTART : "run_feature_start_action",
+        FEATURESTOP : "run_feature_stop_action",
+        CLASSIFYSTART : "run_classify_start_action",
+        CLASSIFYSTOP : "run_classify_stop_action",
         TRAINSTART : "run_train_start_action",
+        TRAINSTOP : "run_train_stop_action",
         LISTFEATURES : "run_list_features_action",
     }
