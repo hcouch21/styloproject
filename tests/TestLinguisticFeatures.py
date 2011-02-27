@@ -18,6 +18,9 @@ import unittest
 import imp
 import os
 import sys
+sys.path.append(os.getcwd())
+
+from src.Domain import Sample
 
 class  LinguisticFeaturesTestCase(unittest.TestCase):
     def setUp(self):
@@ -32,17 +35,20 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
         return getattr(mod, name)()
 
     def test_char_count(self):
-        correct = [2870, 3001, 3052, 3182, 2906]
+        correct = [3182, 2906, 2870, 3001, 3052]
         
         lin_feat = self.get_linguistic_feature("CharCount")
 
         count = 0
-        for file in os.listdir("./tests/data/"):
-            with open("tests/data/%s" % file, "r") as f:
-                val = lin_feat.extract(f.read())
-                
-                if val != correct[count]:
-                    self.fail("CharCount for %s calculated value %d is not equal to given value %d." % (file, val, correct[count]))
+        files = os.listdir("./tests/data")
+        files.sort()
+
+        for file in files:
+            sample = Sample("tests/data/%s" % file)
+            val = lin_feat.extract(sample)
+
+            if val[0].value != correct[count]:
+                self.fail("CharCount for %s calculated value %d is not equal to given value %d." % (file, val[0].value, correct[count]))
 
             count += 1
 
