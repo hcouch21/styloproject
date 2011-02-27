@@ -55,5 +55,7 @@ class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
         manager.fire_event(Hooks.EXTRACTSTOP, state)
 
     def run_list_features_action(self, state, manager):
-        for feature in FeatureFactory.get_installed_features():
-            print FeatureFactory.get_feature(feature).get_long_name()
+        for name in FeatureFactory.get_installed_features():
+            feature = FeatureFactory.get_feature(name)
+            print feature.get_long_name() + " (" \
+		+ feature.get_short_name() + ")"
