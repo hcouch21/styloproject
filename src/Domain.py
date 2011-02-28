@@ -154,6 +154,9 @@ class FeatureResult(object):
         
         self.name = name
 
+    def __str__(self):
+        return "%s - %s [%s]" % (self.name, self.value, self.weight)
+
 # Code from:
 # http://eli.thegreenplace.net/2010/06/25/aes-encryption-of-files-in-python-with-pycrypto/
 def encrypt_file(key, in_filename, out_filename=None, chunksize=64*1024):
