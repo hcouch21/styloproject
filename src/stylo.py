@@ -65,9 +65,9 @@ class StyloCLI(object):
                 print "Could not find file or path: %s" % options.input
 
         if options.features is not None:
-            pass
+            raise NotImplementedError()
         else:
-            pass
+            raise NotImplementedError()
         
         if options.list_features:
             self.plugin_manager.fire_event(Hooks.LISTFEATURES, state)
@@ -80,6 +80,16 @@ class StyloCLI(object):
             self.plugin_manager.fire_event(Hooks.EXTRACTSTART, state)
             self.plugin_manager.fire_event(Hooks.CLASSIFYSTART, state)
 
+            if not options.pickle:
+                for sample in state.extracted:
+                    print "Sample: %s" % sample.name
+                    print "================"
+
+                    for feature_result in sample.feature_results:
+                        print feature_result
+            else:
+                raise NotImplementedError()
+
 if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option("-c", "--corpus", help="Specify a corpus")
@@ -87,6 +97,7 @@ if __name__ == "__main__":
     parser.add_option("-i", "--input", help="Path to input directory or file")
     parser.add_option("-l", "--list-features", action="store_true", help="Lists all available features")
     parser.add_option("-t", "--train", action="store_true", help="Train Stylo against specified corpus")
+    parser.add_option("-p", "--pickle", action="store_true", help="Output pickled version of the results")
 
     (options, args) = parser.parse_args()
 
