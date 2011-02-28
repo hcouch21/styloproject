@@ -26,6 +26,7 @@ class PunctCount(LinguisticFeature):
         "PunctCountComma" : ",",
         "PunctCountExclamation" : "!",
         "PunctCountQuestion" : "?",
+        "PunctCountSemicolon" : ";",
     }
 
     def extract(self, sample):
@@ -34,10 +35,10 @@ class PunctCount(LinguisticFeature):
         sample_length = len(sample.plain_text)
 
         for key, value in self._punctuation.items():
-            val = round((float(sample.plain_text.count(value)) /
-                              sample_length) * 100, 2)
+#            val = round((float(sample.plain_text.count(value)) /
+#                              sample_length) * 100, 2)
             result = FeatureResult(key)
-            result.value = val
+            result.value = sample.plain_text.count(value)
 
             rVal.append(result)
 
