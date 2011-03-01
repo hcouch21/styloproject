@@ -54,7 +54,7 @@ class OrangeAdaptor(PlugIn, ClassifyStart, TrainStart):
                 data += "%s\t" % feature_result.value
 
                 # Set weights
-                feature_result.weight = orange.MeasureAttribute_relevance(feature_result.name, train_data)
+                feature_result.weight = orange.MeasureAttribute_relief(feature_result.name, train_data)
 
             header_complete = True
             data += "\n"
@@ -100,7 +100,7 @@ class OrangeAdaptor(PlugIn, ClassifyStart, TrainStart):
 
             for feature_result in state.extracted[0].feature_results:
                 header_line += "%s\t" % feature_result.name
-                type_line += "discrete\t"
+                type_line += "continuous\t"
                 special_line += "\t"
 
         with open(state.corpus.path + "stylo/training.tab", "w") as f:
