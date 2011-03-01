@@ -39,6 +39,12 @@ class PluginManager(object):
     }
     
     def load_plugin(self, name):
+        """Loads a plugin and registers it with a call to register
+
+        name -- Name of the plugin to load (module name as well as class name)
+
+        """
+
         mod = None
 
         try:
@@ -46,6 +52,7 @@ class PluginManager(object):
             pi = getattr(mod, name)()
             pi.register(self._hooks)
             self._plug_ins[name] = pi
+        # Couldn't load the plugin, probably because of import error
         except Exception as e:
             print "Failed to load plugin %s." % name
 
@@ -53,6 +60,11 @@ class PluginManager(object):
         pass
 
     def remove_plugin(self, plugin):
+        """Removes the specified plugin from callback list
+
+        plugin -- Plugin object to remove
+
+        """
         pi = self._plug_ins[plugin]
         
         if pi is not None:
@@ -61,8 +73,13 @@ class PluginManager(object):
             del pi
 
     def fire_event(self, event, state):
+        """Fires the given event for each plugin which needs it
+
+        event -- The event to fire
+        state -- RunState object about the current state of Stylo
+
+        """
         for plugin in self._hooks[event]:
-            #plugin.run_extract_start_action(state, self)
             event_action = getattr(plugin, Hooks.functions[event])
             event_action(state, self)
 

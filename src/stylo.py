@@ -39,19 +39,28 @@ class StyloCLI(object):
         pass
 
     def parse_arguments(self, args, options):
+        """Sets Stylo up based on the command line arguments/options
+
+        args -- Arguments from the command line
+        options -- Options from the command line
+
+        """
         state = RunState()
 
+        # Set up the corpus
         if options.corpus:
             for c in Corpus.get_all_corpora():
                 if c.name == options.corpus:
                     state.corpus = c
                     state.corpus.load()
                     break
-            
+
+            # If the specified corpus doesn't exist
             if state.corpus is None:
                 print "Could not find corpus with name: %s" % options.corpus
                 sys.exit(1)
 
+        # Set up the input file
         if options.input:
             if os.path.exists(options.input):
                 # Directory
@@ -64,20 +73,25 @@ class StyloCLI(object):
             else:
                 print "Could not find file or path: %s" % options.input
 
+        # Set needed linguistic features
         if options.features is not None:
             raise NotImplementedError()
-        
+
+        # List features
         if options.list_features:
             self.plugin_manager.fire_event(Hooks.LISTFEATURES, state)
 
             sys.exit(0)
+        # Train
         elif options.train:
             state.training = True
             self.plugin_manager.fire_event(Hooks.TRAINSTART, state)
+        # Classify
         else:
             self.plugin_manager.fire_event(Hooks.EXTRACTSTART, state)
             self.plugin_manager.fire_event(Hooks.CLASSIFYSTART, state)
 
+            # Output human readable
             if not options.pickle:
                 for sample in state.extracted:
                     print "Sample: %s" % sample.name
@@ -85,6 +99,7 @@ class StyloCLI(object):
 
                     for feature_result in sample.feature_results:
                         print feature_result
+            # Output pickled (serialized)
             else:
                 raise NotImplementedError()
 
