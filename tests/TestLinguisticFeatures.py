@@ -18,20 +18,20 @@ import unittest
 import imp
 import os
 import sys
+
 sys.path.append(os.getcwd())
 
-from src.Domain import Sample
+from Domain import Sample
 
 class  LinguisticFeaturesTestCase(unittest.TestCase):
-    def setUp(self):
-        sys.path.append("./src")
+    #def setUp(self):
 
     #def tearDown(self):
     #    self.foo.dispose()
     #    self.foo = None
 
     def get_linguistic_feature(self, name):
-        mod = imp.load_source(name, "src/features/%s.py" % name)
+        mod = imp.load_source(name, "features/%s.py" % name)
         return getattr(mod, name)()
 
     def test_char_count(self):
@@ -40,20 +40,49 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
         lin_feat = self.get_linguistic_feature("CharCount")
 
         count = 0
-        files = os.listdir("./tests/data")
+        files = os.listdir("../tests/data")
         files.sort()
 
         for file in files:
-            sample = Sample("tests/data/%s" % file)
+            sample = Sample("../tests/data/%s" % file)
             val = lin_feat.extract(sample)
 
             if val[0].value != correct[count]:
-                self.fail("CharCount for %s calculated value %d is not equal to given value %d." % (file, val[0].value, correct[count]))
+                self.fail("CharCount for %s calculated value %d is not " +
+                          "equal to given value %d." % (file, val[0].value, 
+                          correct[count]))
 
             count += 1
 
-    def test_punct_count(self):
-        pass
+    def test_punct_pct(self):
+        lin_feat = self.get_linguistic_feature("PctPunctuation")
+
+        correct = [[0.00, 0.91, 0.00, 0.97, 0.00],
+                   [0.00, 1.20, 0.07, 1.27, 0.00],
+                   [0.00, 1.08, 0.03, 1.08, 0.00],
+                   [0.00, 0.83, 0.00, 0.93, 0.00],
+                   [0.00, 0.85, 0.00, 0.95, 0.00]]
+
+        files = os.listdir("../tests/data")
+        files.sort()
+
+        row = 0;
+        col = 0;
+
+        for file in files:
+            sample = Sample("../tests/data/%s" % file)
+            val = lin_feat.extract(sample)
+
+            col = 0;
+
+            for result in val :
+                if result.value != correct[row][col]:
+                    self.fail("PctPunctuation for %s calculated value %.2f " +
+                              "is not equal to given value %.2f. at (%d,%d)" %
+                              (file, result.value, correct[row][col],row,col))
+                col += 1
+
+            row += 1
 
     def test_word_count(self):
         pass
