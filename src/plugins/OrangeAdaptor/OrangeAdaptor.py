@@ -53,6 +53,9 @@ class OrangeAdaptor(PlugIn, ClassifyStart, TrainStart):
 
                 data += "%s\t" % feature_result.value
 
+                # Set weights
+                feature_result.weight = orange.MeasureAttribute_relevance(feature_result.name, train_data)
+
             header_complete = True
             data += "\n"
 
