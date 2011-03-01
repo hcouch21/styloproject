@@ -66,8 +66,6 @@ class StyloCLI(object):
 
         if options.features is not None:
             raise NotImplementedError()
-        else:
-            raise NotImplementedError()
         
         if options.list_features:
             self.plugin_manager.fire_event(Hooks.LISTFEATURES, state)
