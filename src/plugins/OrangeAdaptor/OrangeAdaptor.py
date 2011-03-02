@@ -27,17 +27,29 @@ except:
 
 class OrangeAdaptor(PlugIn, ClassifyStart, TrainStart):
     def register(self, hooks):
+        """Set up callbacks for events we want to know about"""
+
         hooks[Hooks.CLASSIFYSTART].append(self)
         hooks[Hooks.TRAINSTART].append(self)
 
     def unregister(self, hooks):
+        """Remove us from the list of callbacks"""
+        
         hooks[Hooks.CLASSIFYSTART].remove(self)
         hooks[Hooks.TRAINSTART].append(self)
 
     def run_classify_start_action(self, state, manager):
+        """Called when Stylo is in the classifying stage
+
+        state -- Current state of Stylo
+        manager -- Plugin manager (used if we want to fire new events)
+
+        """
+        
         train_data = orange.ExampleTable(state.corpus.path + "stylo/training.tab")
         classifier = orange.BayesLearner(train_data)
 
+        # Extract info from samples
         header_complete = False
         header_line = "Author\t"
         type_line = "discrete\t"
@@ -59,6 +71,7 @@ class OrangeAdaptor(PlugIn, ClassifyStart, TrainStart):
             header_complete = True
             data += "\n"
 
+        # Write info to disk
         with open("classify_data.tab", "w") as f:
             f.write("%s\n" % header_line)
             f.write("%s\n" % type_line)
@@ -68,6 +81,7 @@ class OrangeAdaptor(PlugIn, ClassifyStart, TrainStart):
         class_data = orange.ExampleTable("classify_data.tab")
         os.remove("classify_data.tab")
 
+        # Classify each sample
         count = 0
         for example in class_data:
             author_result = FeatureResult("Author")
@@ -77,6 +91,14 @@ class OrangeAdaptor(PlugIn, ClassifyStart, TrainStart):
             count += 1
 
     def run_train_start_action(self, state, manager):
+        """Called when Stylo is in the training stage
+
+        state -- Current state of Stylo
+        manager -- Plugin manager (used if we want to fire new events)
+
+        """
+
+        # If we're not in a training state exit
         if state.training is None or state.training != True:
             print "Error: Not a training state object"
             sys.exit(1)
