@@ -33,6 +33,9 @@ class  PluginInterfacesTestCase(unittest.TestCase):
         plugins.remove("__init__.py")
 
         for pi_name in plugins:
+            if os.path.isfile(os.path.join('plugins', pi_name)) :
+                continue
+
             mod = imp.load_source(pi_name, "plugins/%s/%s.py" % (pi_name, pi_name))
             pi = getattr(mod, pi_name)()
 
