@@ -20,14 +20,25 @@ from PlugInInterface import *
 
 class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
     def register(self, hooks):
+        """Set up callbacks for events we want to know about"""
+
         hooks[Hooks.EXTRACTSTART].append(self)
         hooks[Hooks.LISTFEATURES].append(self)
 
     def unregister(self, hooks):
+        """Remove us from the list of callbacks"""
+        
         hooks[Hooks.EXTRACTSTART].remove(self)
         hooks[Hooks.LISTFEATURES].remove(self)
     
     def run_extract_start_action(self, state, manager):
+        """Called when Stylo is in the extraction stage
+
+        state -- Current state of Stylo
+        manager -- Plugin manager (used if we want to fire new events)
+
+        """
+
         # If no features specified, use them all
         if state.features_to_extract is None:
             state.features_to_extract = []
@@ -55,6 +66,13 @@ class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
         manager.fire_event(Hooks.EXTRACTSTOP, state)
 
     def run_list_features_action(self, state, manager):
+        """Called when Stylo is in the list feature stage
+
+        state -- Current state of Stylo
+        manager -- Plugin manager (used if we want to fire new events)
+
+        """
+
         for name in FeatureFactory.get_installed_features():
             feature = FeatureFactory.get_feature(name)
             print feature.get_long_name() + " (" \
