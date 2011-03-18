@@ -23,7 +23,7 @@ def init_features(clazz):
 
     for feature in installed_features:
         if feature.endswith(".py"):
-            clazz.load_feature(feature.rstrip(".py"))
+            clazz.load_feature(feature[:-3])
 
     return clazz
 
