@@ -17,14 +17,33 @@ from Domain import FeatureResult
 from LinguisticFeature import *
 
 class LexicalDiversity(LinguisticFeature):
+    """Calculates the lexical diversity of a sample
+    _short_name -- Short name of feature
+    _long_name -- Long name of feature
+    _description -- Description of feature
+
+    """
     _short_name = "LexicalDiversity"
     _long_name = "Lexical Diversity"
     _description = "Measures the diversity of the words in the sample."
 
     def extract(self, sample):
+        """ Extract the lexical diversity of the sample
+            Defined as 1 - ( sum(n * (n-1)) / (N * (N*1)) )
+        sample -- Sample to analyze
+
+        """
         result = FeatureResult(self._short_name)
         
-        # (Number of tokens) / (Number of unique tokens)
-        result.value = float(len(sample.nltk_text)) / float(len(set(sample.nltk_text)))
+        unique_words = set(sample.nltk_text)
+        num_words = len(sample.nltk_text)
+        word_accum = 0
+
+        # calculate sum(n * (n-1))
+        for word in unique_words :
+            word_freq = len([ i for i in sample.nltk_text if i == word ])
+            word_accum += word_freq * (word_freq - 1)
+
+        result.value = 1 - (word_accum / (num_words * (num_words - 1)))
 
         return [result]
