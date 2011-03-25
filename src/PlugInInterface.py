@@ -37,7 +37,7 @@ class ExtractStop(object):
         raise NotImplementedError()
 
 class FeatureStart(object):
-    def run_feature_start_action(self, state, feature):
+    def run_feature_start_action(self, state, manager):
         raise NotImplementedError()
 
 class FeatureStop(object):
