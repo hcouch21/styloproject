@@ -36,7 +36,7 @@ class OrangeAdaptor(PlugIn, ClassifyStart, TrainStart):
         """Remove us from the list of callbacks"""
         
         hooks[Hooks.CLASSIFYSTART].remove(self)
-        hooks[Hooks.TRAINSTART].append(self)
+        hooks[Hooks.TRAINSTART].remove(self)
 
     def run_classify_start_action(self, state, manager):
         """Called when Stylo is in the classifying stage
