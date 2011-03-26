@@ -55,6 +55,7 @@ class PluginManager(object):
         # Couldn't load the plugin, probably because of import error
         except Exception as e:
             print "Failed to load plugin %s." % name
+            print e
 
     def load_plugins(self):
         pass
