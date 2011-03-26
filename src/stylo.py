@@ -37,7 +37,7 @@ class StyloCLI(object):
 
     def train(self):
         pass
-
+        
     def parse_arguments(self, args, options):
         """Sets Stylo up based on the command line arguments/options
 
@@ -86,10 +86,13 @@ class StyloCLI(object):
         elif options.train:
             state.training = True
             self.plugin_manager.fire_event(Hooks.TRAINSTART, state)
+            self.plugin_manager.fire_event(Hooks.TRAINSTOP, state)
         # Classify
         else:
             self.plugin_manager.fire_event(Hooks.EXTRACTSTART, state)
+            self.plugin_manager.fire_event(Hooks.EXTRACTSTOP, state)
             self.plugin_manager.fire_event(Hooks.CLASSIFYSTART, state)
+            self.plugin_manager.fire_event(Hooks.CLASSIFYSTOP, state)
 
             # Output human readable
             if not options.pickle:

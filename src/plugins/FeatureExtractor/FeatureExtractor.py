@@ -61,8 +61,6 @@ class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
 
             state.extracted.append(sample)
 
-        manager.fire_event(Hooks.EXTRACTSTOP, state)
-
     def run_list_features_action(self, state, manager):
         """Called when Stylo is in the list feature stage
 
