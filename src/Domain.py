@@ -41,10 +41,28 @@ class Corpus(object):
     uses_encryption = False
     path = None
     
+    _loaded = False
+    
     def __init__(self, name):
         self.name = name
         self.path = "./corpora/%s/" % name
         self.authors = []
+    
+    def file_count(self):
+        if not self._loaded:
+            self.load()
+        
+        count = 0
+        for author in self.authors:
+            count += len(author.samples)
+        
+        return count
+    
+    def author_count(self):
+        if not self._loaded:
+            self.load()
+        
+        return len(self.authors)
 
     def load(self, password=None):
         author_names = os.listdir(self.path)
@@ -57,6 +75,8 @@ class Corpus(object):
         for name in author_names:
             author = Author(self.path, name)
             self.authors.append(author)
+        
+        self._loaded = True
 
     def __str__(self):
         return "%s - %d authors" % (self.name, len(self.authors))
