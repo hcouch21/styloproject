@@ -108,6 +108,7 @@ class OrangeAdaptor(PlugIn, ClassifyStart, TrainStart):
             state.to_extract = author.samples
 
             manager.fire_event(Hooks.EXTRACTSTART, state)
+            manager.fire_event(Hooks.EXTRACTSTOP, state)
 
             for sample in state.extracted:
                 data += "%s\t" % author.name
