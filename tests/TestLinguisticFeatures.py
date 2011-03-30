@@ -97,9 +97,9 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
             sample = Sample("../tests/data/%s" % file)
             val = lin_feat.extract(sample)
 
-            print "Results for " + file + ":\n"
-            for result in val :
-                print result.name + ": " + str(result.value) + "\n"
+#            print "Results for " + file + ":\n"
+#            for result in val :
+#                print result.name + ": " + str(result.value) + "\n"
 
 if __name__ == '__main__':
     unittest.main()
