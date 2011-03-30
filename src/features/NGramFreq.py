@@ -91,4 +91,19 @@ class NGramFreq(LinguisticFeature):
             result.value = trigrams[trigram] / total
             result_set.append(result)
 
+        # Unique unigrams
+        result = FeatureResult("UniqueUnigramPct")
+        result.value = len(unigrams) / float(num_unigrams)
+        result_set.append(result)
+
+        # Unique bigrams
+        result = FeatureResult("UniqueBigramPct")
+        result.value = len(bigrams) / float(num_bigrams)
+        result_set.append(result)
+
+        # Unique tri
+        result = FeatureResult("UniqueTrigramPct")
+        result.value = len(trigrams) / float(num_trigrams)
+        result_set.append(result)
+
         return result_set
