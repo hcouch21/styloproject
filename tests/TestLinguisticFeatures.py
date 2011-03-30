@@ -85,7 +85,26 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
             row += 1
 
     def test_word_count(self):
-        pass
+        lin_feat = self.get_linguistic_feature("WordCount")
+
+        correct = [496, 498, 498, 492, 501]
+   
+        files = os.listdir("../tests/data")
+        files.sort()
+
+        num = 0
+
+        for file in files :
+            sample = Sample("../tests/data/%s" % file)
+            val = lin_feat.extract(sample)
+
+            for result in val :
+                if result.value != correct[num] :
+                    self.fail("WordCount for %s calculated %d " +
+                              "is not equal to given value %d" %
+                              (file, result.value, correct[num]))
+
+                num += 1
 
     def test_ngram_freq(self):
         lin_feat = self.get_linguistic_feature("NGramFreq")
