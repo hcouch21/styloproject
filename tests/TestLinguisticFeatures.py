@@ -87,6 +87,20 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
     def test_word_count(self):
         pass
 
+    def test_ngram_freq(self):
+        lin_feat = self.get_linguistic_feature("NGramFreq")
+
+        files = os.listdir("../tests/data")
+        files.sort()
+
+        for file in files :
+            sample = Sample("../tests/data/%s" % file)
+            val = lin_feat.extract(sample)
+
+            print "Results for " + file + ":\n"
+            for result in val :
+                print result.name + ": " + str(result.value) + "\n"
+
 if __name__ == '__main__':
     unittest.main()
 
