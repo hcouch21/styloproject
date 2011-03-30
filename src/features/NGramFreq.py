@@ -22,7 +22,7 @@ class NGramFreq(LinguisticFeature):
     _description = "Frequency of unigrams, bigrams, and trigrams in the sample"
 
     def extract(self, sample):
-        """ Extract unigram, bigram, and trigram frequency from a sample
+        """ Extract uni-, bi-, and trigram frequency information from a sample
         sample -- Sample to extract from
 
         """
@@ -35,18 +35,10 @@ class NGramFreq(LinguisticFeature):
 
         num_grams = len(sample.nltk_text)
 
-        for i in range(len(sample.nltk_text)):
-            unigram = sample.nltk_text[i]
-            bigram = sample.nltk_text[i]
-            trigram = sample.nltk_text[i]
+        for i in range(num_grams):
+            # Construct Unigram
+            unigram = sample.nltk_text[i].lower()
 
-            # Append the next 1-2 grams to bigram & trigram
-            if i < num_grams - 1 :
-                bigram += " " + sample.nltk_text[i + 1]
-                trigram += " " + sample.nltk_text[i + 1]
-            if i < num_grams - 2 :
-                trigram += " " + sample.nltk_text[i + 2]
-            
             # Increment unigram counts
             if unigram in unigrams :
                 unigrams[unigram] += 1
@@ -54,19 +46,30 @@ class NGramFreq(LinguisticFeature):
                 unigrams[unigram] = 1
             num_unigrams += 1
 
-            # Increment bigram counts
-            if bigram in bigrams :
-                bigrams[bigram] += 1
-            else :
-                bigrams[bigram] = 1
-            num_bigrams += 1
+            # Construct Bigram
+            if (i < num_grams - 1) :
+                bigram = sample.nltk_text[i].lower() + " " +
+                         sample.nltk_text[i + 1].lower()
 
-            # Increment trigram counts
-            if trigram in trigrams :
-                trigrams[trigram] += 1
-            else :
-                trigrams[trigram] = 1
-            num_trigrams += 1
+                # Increment bigram counts
+                if bigram in bigrams :
+                    bigrams[bigram] += 1
+                else :
+                    bigrams[bigram] = 1
+                num_bigrams += 1
+
+            # Construct Trigram
+            if (i < num_grams - 2) :
+                trigram = sample.nltk_text[i].lower() + "_" +
+                          sample.nltk_text[i + 1].lower() + "_" + 
+                          sample.nltk_text[i + 2].lower()
+            
+                # Increment trigram counts
+                if trigram in trigrams :
+                    trigrams[trigram] += 1
+                else :
+                    trigrams[trigram] = 1
+                num_trigrams += 1
 
         result_set = []
 
