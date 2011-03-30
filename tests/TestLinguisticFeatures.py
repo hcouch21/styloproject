@@ -48,8 +48,8 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
             val = lin_feat.extract(sample)
 
             if val[0].value != correct[count]:
-                self.fail("CharCount for %s calculated value %d is not " +
-                          "equal to given value %d." % (file, val[0].value, 
+                self.fail(("CharCount for %s calculated value %d is not " +
+                          "equal to given value %d.") % (file, val[0].value, 
                           correct[count]))
 
             count += 1
@@ -77,8 +77,8 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
 
             for result in val :
                 if result.value != correct[row][col]:
-                    self.fail("PctPunctuation for %s calculated value %.2f " +
-                              "is not equal to given value %.2f. at (%d,%d)" %
+                    self.fail(("PctPunctuation for %s calculated value %.2f " +
+                              "is not equal to given value %.2f. at (%d,%d)") %
                               (file, result.value, correct[row][col],row,col))
                 col += 1
 
@@ -87,7 +87,7 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
     def test_word_count(self):
         lin_feat = self.get_linguistic_feature("WordCount")
 
-        correct = [496, 498, 498, 492, 501]
+        correct = [502, 505, 506, 498, 505]
    
         files = os.listdir("../tests/data")
         files.sort()
@@ -98,13 +98,12 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
             sample = Sample("../tests/data/%s" % file)
             val = lin_feat.extract(sample)
 
-            for result in val :
-                if result.value != correct[num] :
-                    self.fail("WordCount for %s calculated %d " +
-                              "is not equal to given value %d" %
-                              (file, result.value, correct[num]))
+            if val[0].value != correct[num] :
+                self.fail(("WordCount for %s calculated %d " +
+                          "is not equal to given value %d.") %
+                          (file, val[0].value, correct[num]))
 
-                num += 1
+            num += 1
 
     def test_ngram_freq(self):
         lin_feat = self.get_linguistic_feature("NGramFreq")

@@ -23,6 +23,7 @@ class WordCount(LinguisticFeature):
 
     def extract(self, sample):
         result = FeatureResult(self._short_name)
-        result.value = len([x for x in sample.nltk_text if x.isalnum()])
+        result.value = len([x for x in sample.nltk_text
+                                if x.isalnum() or len(x) > 1])
 
         return [result]
