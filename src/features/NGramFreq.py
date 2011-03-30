@@ -48,7 +48,7 @@ class NGramFreq(LinguisticFeature):
 
             # Construct Bigram
             if (i < num_grams - 1) :
-                bigram = sample.nltk_text[i].lower() + " " +
+                bigram = sample.nltk_text[i].lower() + " " + \
                          sample.nltk_text[i + 1].lower()
 
                 # Increment bigram counts
@@ -60,8 +60,8 @@ class NGramFreq(LinguisticFeature):
 
             # Construct Trigram
             if (i < num_grams - 2) :
-                trigram = sample.nltk_text[i].lower() + "_" +
-                          sample.nltk_text[i + 1].lower() + "_" + 
+                trigram = sample.nltk_text[i].lower() + "_" + \
+                          sample.nltk_text[i + 1].lower() + "_" + \
                           sample.nltk_text[i + 2].lower()
             
                 # Increment trigram counts
