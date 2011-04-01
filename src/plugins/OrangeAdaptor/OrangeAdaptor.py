@@ -69,7 +69,13 @@ class OrangeAdaptor(PlugIn, ClassifyStart, TrainStart):
                 feature_result.weight = orange.MeasureAttribute_relief(feature_result.name, train_data)
 
             header_complete = True
+            data = data[:-1]
             data += "\n"
+        
+        # Strip off trailing tabs
+        header_line = header_line[:-1]
+        type_line = type_line[:-1]
+        special_line = special_line[:-1]
 
         # Write info to disk
         with open("classify_data.tab", "w") as f:
@@ -115,6 +121,7 @@ class OrangeAdaptor(PlugIn, ClassifyStart, TrainStart):
                 for feat_res in sample.feature_results:
                     data += "%s\t" % feat_res.value
 
+                data = data[:-1]
                 data += "\n"
 
             header_line = "Author\t"
@@ -125,6 +132,11 @@ class OrangeAdaptor(PlugIn, ClassifyStart, TrainStart):
                 header_line += "%s\t" % feature_result.name
                 type_line += "continuous\t"
                 special_line += "\t"
+        
+        # Strip trailing tabs
+        header_line = header_line[:-1]
+        type_line = type_line[:-1]
+        special_line = special_line[:-1]
 
         with open(state.corpus.path + "stylo/training.tab", "w") as f:
             f.write("%s\n" % header_line)
