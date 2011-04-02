@@ -14,18 +14,14 @@ class StyloGUI(Frame):
         #
 
         apply(Frame.__init__,(self,Master),kw)
-        self.__Frame2 = Frame(self)
-        self.__Frame2.pack(side='top')
-        self.__Frame1 = Frame(self)
-        self.__Frame1.pack(side='top')
-        self.__Frame4 = Frame(self.__Frame1)
+        self.__Frame4 = Frame(self)
         self.__Frame4.pack(padx=15,pady=15,side='left')
         self.__Label2 = Label(self.__Frame4,anchor='nw',justify='left'
             ,text='Corpus')
         self.__Label2.pack(anchor='nw',fill='x',side='top')
         self.__Listbox1 = Listbox(self.__Frame4,height=300,width=50)
         self.__Listbox1.pack(anchor='w',expand='yes',fill='both',side='top')
-        self.__Frame3 = Frame(self.__Frame1)
+        self.__Frame3 = Frame(self)
         self.__Frame3.pack(padx=15,pady=15,side='left')
         self.__Canvas1 = Canvas(self.__Frame3,height=135,width=191)
         self.__Canvas1.pack(side='top')
@@ -41,6 +37,22 @@ class StyloGUI(Frame):
         #
         #Your code here
         #
+        menubar = Menu(Master)
+        filemenu = Menu(menubar, tearoff=0)
+        filemenu.add_command(label="Open File", command=self.openFile)
+        filemenu.add_command(label="Quit",command=self.closeStylo)
+        toolsmenu = Menu(menubar, tearoff=0)
+        toolsmenu.add_command(label="Manage Corpora", command=self.openCorpora)
+        toolsmenu.add_command(label="Manage Feature Sets", command=self.openFeatureSets)
+        toolsmenu.add_command(label="Manage Plugins", command=self.openPlugins)
+        helpmenu = Menu(menubar, tearoff=0)
+        helpmenu.add_command(label="Help", command=self.openHelp)
+        helpmenu.add_command(label="About",command=self.openAbout)
+        menubar.add_cascade(label="File", menu=filemenu)
+        menubar.add_cascade(label="Tools", menu=toolsmenu)
+        menubar.add_cascade(label="Help", menu=helpmenu)
+		
+        Master.config(menu=menubar)
     #
     #Start of event handler methods
     #
@@ -48,8 +60,27 @@ class StyloGUI(Frame):
     #
     #Start of non-Rapyd user code
     #
+    def openFile(self):
+        print("I should totally be opening a file now!")
+    
+    def closeStylo(self):
+        print("I should totally do some cleanup before exiting. LOL!")
+        self.quit()
+		
+    def openHelp(self):
+        print("NO HELP IS COMING")
+		
+    def openAbout(self):
+        print("Why don't you tell me a little bit about yourself?")
 
-
+    def openCorpora(self):
+        print("You're a corpora-te tool!")
+		
+    def openFeatureSets(self):
+        print("Here are some sets...of features.")
+		
+    def openPlugins(self):
+        print("<plug-in joke goes here>")
 try:
     #--------------------------------------------------------------------------#
     # User code should go after this comment so it is inside the "try".        #
