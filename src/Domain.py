@@ -152,7 +152,12 @@ class Sample(object):
         with open(self.path, "r") as f:
             self.plain_text = f.read()
 
-        self.nltk_text = nltk.Text(nltk.word_tokenize(self.plain_text))
+        sent_tokenizer = nltk.data.load('file:tokenizers/punkt/english.pickle',
+                                        format='pickle')
+        tokenized = []
+        for sentence in sent_tokenizer.tokenize(self.plain_text) :
+            tokenized += nltk.word_tokenize(sentence)
+        self.nltk_text = nltk.Text(tokenized)
 
 class FeatureResult(object):
     """Stores the value after a linguistic feature is extracted
