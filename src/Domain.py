@@ -152,10 +152,8 @@ class Sample(object):
         with open(self.path, "r") as f:
             self.plain_text = f.read()
 
-        sent_tokenizer = nltk.data.load('file:tokenizers/punkt/english.pickle',
-                                        format='pickle')
         tokenized = []
-        for sentence in sent_tokenizer.tokenize(self.plain_text) :
+        for sentence in nltk.sent_tokenize(self.plain_text) :
             tokenized += nltk.word_tokenize(sentence)
         self.nltk_text = nltk.Text(tokenized)
 
