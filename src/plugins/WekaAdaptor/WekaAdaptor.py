@@ -23,6 +23,9 @@ from Domain import FeatureResult
 from PlugInInterface import *
 
 class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
+    _classify_algorithm = "weka.classifiers.bayes.NaiveBayes"
+    _relevance_algorithm = "weka.attributeSelection.ReliefFAttributeEval"
+    
     def __init__(self):
         config = ConfigParser.RawConfigParser()
         config.read("plugins/WekaAdaptor/WekaAdaptor.config")
@@ -41,6 +44,12 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
         if weka_error:
             print "Could not find Weka, make sure its in your CLASSPATH"
             sys.exit(1)
+        
+        if config.has_option("Weka",  "classify_algorithm"):
+            self._classify_algorithm = config.get("Weka",  "classify_algorithm")
+        
+        if config.has_option("Weka",  "relevance_algorithm"):
+            self._relevance_algorithm = config.get("Weka",  "relevance_algorithm")
     
     def register(self, hooks):
         """Set up callbacks for events we want to know about"""
@@ -63,7 +72,7 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
         """
         
         # Parse out weights
-        weka_results = Popen(["java",  "weka.attributeSelection.ReliefFAttributeEval", "-i", state.corpus.path + "stylo/training-weka.arff", "-c", "first"],  stdout=PIPE).communicate()[0]
+        weka_results = Popen(["java",  self._relevance_algorithm, "-i", state.corpus.path + "stylo/training-weka.arff", "-c", "first"],  stdout=PIPE).communicate()[0]
         weka_weights = {}
         start_weights = False
         for line in weka_results.split("\n"):
@@ -116,7 +125,7 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
             f.write("%s\n" % attribute_lines)
             f.write("@data\n%s" % data)
             
-        weka_results = Popen(["java",  "weka.classifiers.bayes.NaiveBayes", "-t", state.corpus.path + "stylo/training-weka.arff", "-T", "classify_data.arff", "-c", "first", "-p", "0"],  stdout=PIPE).communicate()[0]
+        weka_results = Popen(["java",  self._classify_algorithm, "-t", state.corpus.path + "stylo/training-weka.arff", "-T", "classify_data.arff", "-c", "first", "-p", "0"],  stdout=PIPE).communicate()[0]
         os.remove("classify_data.arff")
 
         # Classify each sample
