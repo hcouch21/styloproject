@@ -57,9 +57,9 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
     def test_punct_pct(self):
         lin_feat = self.get_linguistic_feature("PctPunctuation")
 
-        correct = [[0.00, 0.91, 0.00, 0.97, 0.00],
+        correct = [[0.00, 0.85, 0.00, 0.97, 0.00],
                    [0.00, 1.20, 0.07, 1.27, 0.00],
-                   [0.00, 1.08, 0.03, 1.08, 0.00],
+                   [0.00, 1.05, 0.03, 1.08, 0.00],
                    [0.00, 0.83, 0.00, 0.93, 0.00],
                    [0.00, 0.85, 0.00, 0.95, 0.00]]
 

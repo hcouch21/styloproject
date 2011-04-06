@@ -16,9 +16,9 @@
 from Domain import FeatureResult
 from LinguisticFeature import *
 
-class LongWordCount(LinguisticFeature):
-    _short_name = "LongWordCount"
-    _long_name = "Long Word Count"
+class LargeWordCount(LinguisticFeature):
+    _short_name = "LargeWordCount"
+    _long_name = "Large Word Count"
     _description = "Number of words in the sample with at least 10 characters."
 
     def extract(self, sample):
