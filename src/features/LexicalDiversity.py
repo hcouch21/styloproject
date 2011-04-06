@@ -35,7 +35,7 @@ class LexicalDiversity(LinguisticFeature):
         """
         result = FeatureResult(self._short_name)
     
-        words = [x for x in sample.nltk_text if x.isalnum() and len(x) > 1]
+        words = self._get_words(sample)
     
         unique_words = set(words)
         num_words = len(words)

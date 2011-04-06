@@ -38,7 +38,7 @@ class WordGroups(LinguisticFeature):
     def extract(self, sample):
         group_counts = {}
 
-        words = [x for x in sample.nltk_text if x.isalnum() and len(x) > 1]
+        words = self._get_words(sample)
         
         # Loop through all words
         for word in words:

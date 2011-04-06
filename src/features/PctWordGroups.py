@@ -30,7 +30,7 @@ class PctWordGroups(LinguisticFeature):
         # Set options to case sensitive
         config.optionxform = str
         # Config files are named after module
-        config.read("features/%s.config" % self._short_name)
+        config.read("features/WordGroups.config")
         
         for group in config.options("WordGroups"):
             self._group_words[group] = config.get("WordGroups",  group).split(",")
@@ -38,7 +38,7 @@ class PctWordGroups(LinguisticFeature):
     def extract(self, sample):
         group_counts = {}
 
-        words = [x for x in sample.nltk_text if x.isalnum() and len(x) > 1]
+        words = self._get_words(sample)
         
         # Loop through all words
         for word in words:

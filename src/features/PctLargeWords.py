@@ -31,7 +31,7 @@ class PctLargeWords(LinguisticFeature):
         result.value = 0
 
         num_large_words = 0
-        words = [x for x in sample.nltk_text if x.isalnum() and len(x) > 1];
+        words = self._get_words(sample)
         for word in words :
             if len(word) >= 10 :
                 num_large_words += 1

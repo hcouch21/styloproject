@@ -25,7 +25,8 @@ class UniqueWordCount(LinguisticFeature):
         result = FeatureResult(self._short_name)
         words = {}
 
-        for word in [x for x in sample.nltk_text if x.isalnum() or len(x) > 1] :
+        sample_words = self._get_words(sample)
+        for word in sample_words :
             word = word.lower()
 
             if word not in words :

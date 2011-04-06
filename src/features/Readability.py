@@ -43,13 +43,17 @@ class Readability(LinguisticFeature):
         return results
     
     def __analyze_text(self,  sample):
-        self.word_count = len(sample.nltk_text)
+        words = self._get_words(sample)
+
+        self.word_count = len(words)
         self.char_count = len(sample.plain_text)
         
-        for word in sample.nltk_text:
+        for word in words:
             self.syllable_count += syllables_en.count(word)
         
-        sent_tokenizer = nltk.data.load('file:tokenizers/punkt/english.pickle',format='pickle')
+        sent_tokenizer = nltk.data.load('file:tokenizers/punkt/english.pickle',
+                                        format='pickle')
         self.sentence_count = len(sent_tokenizer.tokenize(sample.plain_text))
         
-        self.avg_words_per_sentence = float(self.word_count) / float(self.sentence_count)
+        self.avg_words_per_sentence = float(self.word_count) / \
+                                      float(self.sentence_count)

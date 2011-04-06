@@ -33,10 +33,9 @@ class Complexity(LinguisticFeature):
         sample -- Sample to analyze
 
         """
+        words = self._get_words(sample)
+    
         result = FeatureResult(self._short_name)
-    
-        words = [x for x in sample.nltk_text if x.isalnum() and len(x) > 1]
-    
         result.value = float(len(set(words))) / float(len(words))
 
         return [result]
