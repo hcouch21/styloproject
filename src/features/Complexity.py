@@ -34,8 +34,9 @@ class Complexity(LinguisticFeature):
 
         """
         result = FeatureResult(self._short_name)
-        
-        result.value = float(len(set(sample.nltk_text))) / \
-                       float(len(sample.nltk_text))
+    
+        words = [x for x in sample.nltk_text if x.isalnum() and len(x) > 1]
+    
+        result.value = float(len(set(words))) / float(len(words))
 
         return [result]
