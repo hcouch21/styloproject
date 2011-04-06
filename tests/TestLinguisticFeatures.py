@@ -115,9 +115,26 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
             sample = Sample("../tests/data/%s" % file)
             val = lin_feat.extract(sample)
 
-#            print "Results for " + file + ":\n"
-#            for result in val :
-#                print result.name + ": " + str(result.value) + "\n"
+    def test_avg_chars_per_paragraph(self):
+        lin_feat = self.get_linguistic_feature("AvgCharactersPerParagraph")
+
+        correct = [397.75, 363.25, 717.50, 500.17, 508.67]
+
+        files = os.listdir("../tests/data")
+        files.sort()
+
+        col = 0
+
+        for file in files :
+            sample = Sample("../tests/data/%s" % file)
+            val = lin_feat.extract(sample)
+
+            if val[0].value != correct[col] :
+                self.fail(("AvgCharactersPerParagraph for %s calculated %.2f " +
+                          "is not equal to given value %.2f.") %
+                          (file, val[0].value, correct[col]))
+
+            col += 1
 
 if __name__ == '__main__':
     unittest.main()
