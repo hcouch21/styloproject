@@ -39,4 +39,4 @@ class LinguisticFeature(object):
         """ Single place to get all words in the sample (not including punct.)
 
         """
-        return [x for x in sample.nltk_text if x.isalnum() and len(x) > 1]
+        return [x for x in sample.nltk_text if x.isalnum() or len(x) > 1]
