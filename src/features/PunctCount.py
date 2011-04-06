@@ -30,15 +30,18 @@ class PunctCount(LinguisticFeature):
     }
 
     def extract(self, sample):
+        """ Calculate the number of each type of punctuation in the sample
+        sample -- Sample to analyze
+
+        """
         rVal = []
 
         sample_length = len(sample.plain_text)
 
+        # Count each punctuation separately
         for key, value in self._punctuation.items():
-#            val = round((float(sample.plain_text.count(value)) /
-#                              sample_length) * 100, 2)
             result = FeatureResult(key)
-            result.value = sample.plain_text.count(value)
+            result.value = len([x for x in sample.nltk_text if x == value])
 
             rVal.append(result)
 

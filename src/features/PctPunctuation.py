@@ -35,8 +35,8 @@ class PctPunctuation(LinguisticFeature):
         sample_length = len(sample.plain_text)
 
         for key, value in self._punctuation.items():
-            val = round((float(sample.plain_text.count(value)) /
-                              sample_length) * 100, 2)
+            val = round((float(len([x for x in sample.nltk_text
+                                    if x == value])) / sample_length) * 100, 2)
             result = FeatureResult(key)
             result.value = val
 
