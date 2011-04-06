@@ -34,14 +34,16 @@ class LexicalDiversity(LinguisticFeature):
 
         """
         result = FeatureResult(self._short_name)
-        
-        unique_words = set(sample.nltk_text)
-        num_words = len(sample.nltk_text)
+    
+        words = [x for x in sample.nltk_text if x.isalnum() and len(x) > 1]
+    
+        unique_words = set(words)
+        num_words = len(words)
         word_accum = 0
 
         # calculate sum(n * (n-1))
         for word in unique_words :
-            word_freq = len([ i for i in sample.nltk_text if i == word ])
+            word_freq = len([ i for i in words if i == word ])
             word_accum += word_freq * (word_freq - 1)
 
         result.value = 1 - (float(word_accum) / float((num_words * 
