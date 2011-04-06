@@ -85,6 +85,11 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
 
         self.run_and_check_test("AvgWordsPerParagraph", correct)
 
+    def test_avg_sent_per_paragraph(self):
+        correct = [3.38, 4.38, 7.5, 4.17, 4.33]
+
+        self.run_and_check_test("AvgSentencesPerParagraph", correct)
+
 if __name__ == '__main__':
     unittest.main()
 
