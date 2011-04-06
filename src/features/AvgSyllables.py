@@ -27,7 +27,7 @@ class AvgSyllables(LinguisticFeature):
         result = FeatureResult(self._short_name)
         num_syllables = []
         
-        words = [x for x in sample.nltk_text if x.isalnum() and len(x) > 1]
+        words = self._get_words(sample)
 
         for word in words :
             num_syllables.append(syllables_en.count(word))

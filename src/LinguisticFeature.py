@@ -34,3 +34,9 @@ class LinguisticFeature(object):
 
     def is_plain_text(self):
         return self._plain_text
+
+    def _get_words(self, sample) :
+        """ Single place to get all words in the sample (not including punct.)
+
+        """
+        return [x for x in sample.nltk_text if x.isalnum() and len(x) > 1]

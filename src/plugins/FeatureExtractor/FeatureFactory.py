@@ -50,7 +50,7 @@ class FeatureFactory:
             else:
                 print "Feature %s is not a Linguistic Feature!" % name
         except Exception as e:
-            print "Failed to load feature %s." % name
+            print "Failed to load feature %s: %s" % (name, e)
         
     @classmethod
     def get_installed_features(self):
