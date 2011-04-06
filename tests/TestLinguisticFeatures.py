@@ -34,107 +34,56 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
         mod = imp.load_source(name, "features/%s.py" % name)
         return getattr(mod, name)()
 
-    def test_char_count(self):
-        correct = [3182, 2906, 2870, 3001, 3052]
-        
-        lin_feat = self.get_linguistic_feature("CharCount")
+    def run_and_check_test(self, feature_name, correct) :
+        lin_feat = self.get_linguistic_feature(feature_name)
 
         count = 0
-        files = os.listdir("../tests/data")
-        files.sort()
-
-        for file in files:
-            sample = Sample("../tests/data/%s" % file)
-            val = lin_feat.extract(sample)
-
-            if val[0].value != correct[count]:
-                self.fail(("CharCount for %s calculated value %d is not " +
-                          "equal to given value %d.") % (file, val[0].value, 
-                          correct[count]))
-
-            count += 1
-
-    def test_punct_pct(self):
-        lin_feat = self.get_linguistic_feature("PctPunctuation")
-
-        correct = [[0.00, 0.85, 0.00, 0.97, 0.00],
-                   [0.00, 1.20, 0.07, 1.27, 0.00],
-                   [0.00, 1.05, 0.03, 1.08, 0.00],
-                   [0.00, 0.83, 0.00, 0.93, 0.00],
-                   [0.00, 0.85, 0.00, 0.95, 0.00]]
 
         files = os.listdir("../tests/data")
         files.sort()
 
-        row = 0;
-        col = 0;
-
-        for file in files:
+        for file in files :
             sample = Sample("../tests/data/%s" % file)
             val = lin_feat.extract(sample)
-
-            col = 0;
 
             for result in val :
-                if result.value != correct[row][col]:
-                    self.fail(("PctPunctuation for %s calculated value %.2f " +
-                              "is not equal to given value %.2f. at (%d,%d)") %
-                              (file, result.value, correct[row][col],row,col))
-                col += 1
+                if result.value != correct[count] :
+                    self.fail(("%s for %s calculated value %.2f is not " +
+                                "equal to given value %.2f") % (feature_name,
+                                file, result.value, correct[count]))
+                count += 1
 
-            row += 1
+    def test_char_count(self):
+        correct = [3182, 2906, 2870, 3001, 3052]
+
+        self.run_and_check_test("CharCount", correct)
+
+    def test_punct_pct(self):
+        correct = [0.00, 0.85, 0.00, 0.97, 0.00,
+                   0.00, 1.20, 0.07, 1.27, 0.00,
+                   0.00, 1.05, 0.03, 1.08, 0.00,
+                   0.00, 0.83, 0.00, 0.93, 0.00,
+                   0.00, 0.85, 0.00, 0.95, 0.00]
+
+        self.run_and_check_test("PctPunctuation", correct)
 
     def test_word_count(self):
-        lin_feat = self.get_linguistic_feature("WordCount")
-
         correct = [502, 505, 506, 498, 505]
-   
-        files = os.listdir("../tests/data")
-        files.sort()
 
-        num = 0
-
-        for file in files :
-            sample = Sample("../tests/data/%s" % file)
-            val = lin_feat.extract(sample)
-
-            if val[0].value != correct[num] :
-                self.fail(("WordCount for %s calculated %d " +
-                          "is not equal to given value %d.") %
-                          (file, val[0].value, correct[num]))
-
-            num += 1
+        self.run_and_check_test("WordCount", correct)
 
     def test_ngram_freq(self):
-        lin_feat = self.get_linguistic_feature("NGramFreq")
-
-        files = os.listdir("../tests/data")
-        files.sort()
-
-        for file in files :
-            sample = Sample("../tests/data/%s" % file)
-            val = lin_feat.extract(sample)
+        pass
 
     def test_avg_chars_per_paragraph(self):
-        lin_feat = self.get_linguistic_feature("AvgCharactersPerParagraph")
-
         correct = [397.75, 363.25, 717.50, 500.17, 508.67]
 
-        files = os.listdir("../tests/data")
-        files.sort()
+        self.run_and_check_test("AvgCharactersPerParagraph", correct)
 
-        col = 0
+    def test_avg_words_per_paragraph(self):
+        correct = [62.75, 63.13, 126.50, 83, 84.17]
 
-        for file in files :
-            sample = Sample("../tests/data/%s" % file)
-            val = lin_feat.extract(sample)
-
-            if val[0].value != correct[col] :
-                self.fail(("AvgCharactersPerParagraph for %s calculated %.2f " +
-                          "is not equal to given value %.2f.") %
-                          (file, val[0].value, correct[col]))
-
-            col += 1
+        self.run_and_check_test("AvgWordsPerParagraph", correct)
 
 if __name__ == '__main__':
     unittest.main()
