@@ -25,7 +25,7 @@ class AvgWordLength(LinguisticFeature):
         result = FeatureResult(self._short_name)
         
         word_lengths = []
-        for word in sample.nltk_text:
+        for word in [x for x in sample.nltk_text if x.isalnum() and len(x) > 1]:
             word_lengths.append(len(word))
         
         result.value = float(sum(word_lengths)) / float(len(word_lengths))
