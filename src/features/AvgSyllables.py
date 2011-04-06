@@ -27,9 +27,11 @@ class AvgSyllables(LinguisticFeature):
         result = FeatureResult(self._short_name)
         num_syllables = []
         
-        for word in sample.nltk_text:
+        words = [x for x in sample.nltk_text if x.isalnum() and len(x) > 1]
+
+        for word in words :
             num_syllables.append(syllables_en.count(word))
         
-        result.value = float(sum(num_syllables)) / float(len(num_syllables))
+        result.value = float(sum(num_syllables)) / float(len(words))
 
         return [result]
