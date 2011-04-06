@@ -18,9 +18,9 @@ import ConfigParser
 from Domain import FeatureResult
 from LinguisticFeature import *
 
-class WordGroups(LinguisticFeature):
-    _short_name = "WordGroups"
-    _long_name = "Word Groups"
+class PctWordGroups(LinguisticFeature):
+    _short_name = "PctWordGroups"
+    _long_name = "Percent Word Groups"
     _description = "Percentage of words per word group."
     
     _group_words = {}
@@ -57,7 +57,7 @@ class WordGroups(LinguisticFeature):
         for group in self._group_words:
             result = FeatureResult("%s%s" % (self._short_name,  group))
             if group in group_counts.keys():
-                result.value = group_counts[group]
+                result.value = float(group_counts[group]) / float(len(words))
             else:
                 result.value = 0.0
             
