@@ -29,10 +29,7 @@ class AvgSentencesPerParagraph(LinguisticFeature):
         sample -- Sample to extract from
 
         """
-        sent_tokenizer = nltk.data.load('file:tokenizers/punkt/english.pickle',
-                                        format='pickle')
-
-        sentences = sent_tokenizer.tokenize(sample.plain_text)
+        sentences = nltk.sent_tokenize(sample.plain_text)
         paragraphs = [x.strip() for x in sample.plain_text.splitlines()
                         if len(x.strip()) > 0]
 

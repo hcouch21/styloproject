@@ -48,7 +48,7 @@ class NGramFreq(LinguisticFeature):
 
             # Construct Bigram
             if (i < num_grams - 1) :
-                bigram = sample.nltk_text[i].lower() + " " + \
+                bigram = sample.nltk_text[i].lower() + "_" + \
                          sample.nltk_text[i + 1].lower()
 
                 # Increment bigram counts

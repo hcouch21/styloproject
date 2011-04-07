@@ -51,9 +51,7 @@ class Readability(LinguisticFeature):
         for word in words:
             self.syllable_count += syllables_en.count(word)
         
-        sent_tokenizer = nltk.data.load('file:tokenizers/punkt/english.pickle',
-                                        format='pickle')
-        self.sentence_count = len(sent_tokenizer.tokenize(sample.plain_text))
+        self.sentence_count = len(nltk.sent_tokenize(sample.plain_text))
         
         self.avg_words_per_sentence = float(self.word_count) / \
                                       float(self.sentence_count)

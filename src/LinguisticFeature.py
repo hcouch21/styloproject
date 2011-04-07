@@ -13,6 +13,16 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Stylo.  If not, see <http://www.gnu.org/licenses/>.
 
+import nltk
+import os.path
+
+def init_nltk(clazz):
+    directory = os.path.dirname(__file__)
+    nltk.data.path.insert(0, directory + "/resources")
+
+    return clazz
+
+@init_nltk
 class LinguisticFeature(object):
     _short_name = ""
     _long_name = ""

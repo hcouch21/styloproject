@@ -23,9 +23,7 @@ class SentenceCount(LinguisticFeature):
     _description = "Number of sentences in the sample."
 
     def extract(self, sample):
-        sent_tokenizer = nltk.data.load('file:tokenizers/punkt/english.pickle',format='pickle')
-
         result = FeatureResult(self._short_name)
-        result.value = len(sent_tokenizer.tokenize(sample.plain_text))
+        result.value = len(nltk.sent_tokenize(sample.plain_text))
 
         return [result]

@@ -23,10 +23,9 @@ class AvgSentenceLength(LinguisticFeature):
     _description = "Average length of sentences in the sample."
 
     def extract(self, sample):
-        sent_tokenizer = nltk.data.load('file:tokenizers/punkt/english.pickle',format='pickle')
-
         total_length = 0
-        sentences = sent_tokenizer.tokenize(sample.plain_text)
+        sentences = nltk.sent_tokenize(sample.plain_text)
+
         # Calculate the total number of words in each sentence
         for sentence in sentences :
             total_length += len(sentence.split())
