@@ -167,7 +167,6 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
             print "Error: Not a training state object"
             sys.exit(1)
 
-        # Need full list of features
         used_features = {}
         extractions = {}
         for author in state.corpus.authors :
@@ -176,30 +175,43 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
             manager.fire_event(Hooks.EXTRACTSTART, state)
             manager.fire_event(Hooks.EXTRACTSTOP, state)
 
+            # Run through the extracted features and keep track of all
+            # feature names used
             for sample in state.extracted :
                 for name in sample.feature_results.keys() :
                     if name not in used_features :
                         used_features[name] = sample.feature_results[name]
 
+            # Store off the extraction information so we can access it
+            # in a second loop
             extractions[author.name] = state.extracted
 
+        # Get a sorted list of all feature names in the corpus
         sorted_feature_list = used_features.keys()
         sorted_feature_list.sort()
 
+        # Need to do optimized construction
+        # so that it doesn't take 10 minutes to write the ARFF file
+        # like it did when the NGram concatenation was first added..
         data = StringIO()
         for author in state.corpus.authors :
             for sample in extractions[author.name]:
                 line = StringIO()
                 line.write("%s," % author.name)
 
+                # Get a sorted list feature result names for this sample
                 feature_result_keys = sample.feature_results.keys()
                 feature_result_keys.sort()
+                # Store length of this so we don't have to call len() each time
                 num_result_keys = len(feature_result_keys)
 
                 list_idx = 0
                 feat_idx = 0
 
+                # Iterate through the full list of features
                 while list_idx < len(sorted_feature_list) :
+                    # If the two indices are the same, then this sample
+                    # contains this feature set, so include its value
                     if feat_idx < num_result_keys and \
                             feature_result_keys[feat_idx] == \
                             sorted_feature_list[list_idx] :
@@ -208,6 +220,8 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
                                             ].value)
                         list_idx += 1
                         feat_idx += 1
+                    # If the two indices are not the same, then this sample
+                    # does not contain this feature set, so move on
                     else :
                         line.write("0,");
                         list_idx += 1
