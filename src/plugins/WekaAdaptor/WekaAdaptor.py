@@ -16,8 +16,11 @@
 import ConfigParser
 import os
 import sys
+import codecs
 
 from subprocess import *
+
+from cStringIO import StringIO
 
 from Domain import FeatureResult
 from PlugInInterface import *
@@ -70,9 +73,9 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
         manager -- Plugin manager (used if we want to fire new events)
 
         """
-        
+       
         # Parse out weights
-        weka_results = Popen(["java",  self._relevance_algorithm, "-i", state.corpus.path + "stylo/training-weka.arff", "-c", "first"],  stdout=PIPE).communicate()[0]
+        weka_results = Popen(["java", "-Dfile.encoding=utf-8",  self._relevance_algorithm, "-i", state.corpus.path + "stylo/training-weka.arff", "-c", "first"],  stdout=PIPE).communicate()[0]
         weka_weights = {}
         start_weights = False
         for line in weka_results.split("\n"):
@@ -86,31 +89,61 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
                 if "ranked attributes" in line.lower():
                     start_weights = True
 
+        sorted_feature_list = weka_weights.keys()
+        sorted_feature_list.sort()
+
         # Extract info from samples
         data = ""
         for sample in state.extracted:
             data += "?,"
-            for feature_result in sample.feature_results:
-                data += "%s," % feature_result.value
-                
-                # Set weight
-                feature_result.weight = weka_weights[feature_result.name]
+
+            feature_result_keys = sample.feature_results.keys()
+            feature_result_keys.sort()
+            num_result_keys = len(feature_result_keys)
+
+            list_idx = 0
+            feat_idx = 0
             
+            while list_idx < len(sorted_feature_list) :
+                if feat_idx < num_result_keys :
+                    sample_feature = feature_result_keys[feat_idx]
+                    sorted_feature = sorted_feature_list[list_idx]
+
+                    if sample_feature == sorted_feature :
+                        feature = sample.feature_results[sample_feature]
+
+                        data += "%s," % feature.value
+                        list_idx += 1
+                        feat_idx += 1
+
+                        # Set weight
+                        feature.weight = weka_weights[sample_feature]
+                    elif sample_feature < sorted_feature :
+
+                        # Set weight
+                        feature = sample.feature_results[sample_feature]
+                        feature.weight = 0
+
+                        feat_idx += 1
+                    else :
+                        data += "0,"
+                        list_idx += 1
+                else :
+                    data += "0,"
+                    list_idx += 1
+
             data = data[:-1]
             data += "\n"
-            
-        attribute_lines = ""
 
-        for feature_result in state.extracted[0].feature_results:
-            attr_type = "numeric"
-            
-            if type(feature_result.value) == int:
-                attr_type = "integer"
-            
-            attribute_lines += "@attribute %s %s\n" % (feature_result.name,  attr_type)
+        # Write attributes
+        attribute_lines = ""
+        for result in sorted_feature_list :
+            attribute_lines += "@attribute \"%s\" numeric\n" % result.replace("\"", "\\\"")
+
+        #attribute_lines = (attribute_lines.decode('latin-1')).encode('utf-8')
 
         # Write info to disk
-        with open("classify_data.arff", "w") as f:
+        with codecs.open("classify_data.arff", "w", "utf-8") as f:
             f.write("@relation train_features\n\n")
             
             # Define the author attribute
@@ -122,11 +155,12 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
             corpus_authors = corpus_authors[:-2]
             f.write("%s}\n" % corpus_authors)
             
-            f.write("%s\n" % attribute_lines)
+            f.write(attribute_lines.decode('utf-8'))
+            f.write("\n")
             f.write("@data\n%s" % data)
             
-        weka_results = Popen(["java",  self._classify_algorithm, "-t", state.corpus.path + "stylo/training-weka.arff", "-T", "classify_data.arff", "-c", "first", "-p", "0"],  stdout=PIPE).communicate()[0]
-        os.remove("classify_data.arff")
+        weka_results = Popen(["java", "-Xmx1g", "-Xms256m", "-Dfile.encoding=utf-8", self._classify_algorithm, "-t", state.corpus.path + "stylo/training-weka.arff", "-T", "classify_data.arff", "-c", "first", "-p", "0"],  stdout=PIPE).communicate()[0]
+        #os.remove("classify_data.arff")
 
         # Classify each sample
         count = 0
@@ -134,7 +168,7 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
             author_result = FeatureResult("Author")
             author_result.value = weka_results.split("\n")[(-3 - count)].split()[2].split(":")[1]
             author_result.weight = weka_results.split("\n")[(-3 - count)].split()[3]
-            example.feature_results.insert(0, author_result)
+            example.feature_results["Author"] = author_result
             count += 1
 
     def run_train_start_action(self, state, manager):
@@ -150,33 +184,77 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
             print "Error: Not a training state object"
             sys.exit(1)
 
-        data = ""
-        for author in state.corpus.authors:
+        used_features = {}
+        extractions = {}
+        for author in state.corpus.authors :
             state.to_extract = author.samples
 
             manager.fire_event(Hooks.EXTRACTSTART, state)
             manager.fire_event(Hooks.EXTRACTSTOP, state)
 
-            for sample in state.extracted:
-                data += "%s," % author.name
-                for feat_res in sample.feature_results:
-                    data += "%s," % feat_res.value
+            # Run through the extracted features and keep track of all
+            # feature names used
+            for sample in state.extracted :
+                for name in sample.feature_results.keys() :
+                    if name not in used_features :
+                        used_features[name] = sample.feature_results[name]
 
+            # Store off the extraction information so we can access it
+            # in a second loop
+            extractions[author.name] = state.extracted
+
+        # Get a sorted list of all feature names in the corpus
+        sorted_feature_list = used_features.keys()
+        sorted_feature_list.sort()
+
+        # Need to do optimized construction
+        # so that it doesn't take 10 minutes to write the ARFF file
+        # like it did when the NGram concatenation was first added..
+        data = StringIO()
+        for author in state.corpus.authors :
+            for sample in extractions[author.name]:
+                line = StringIO()
+                line.write("%s," % author.name)
+
+                # Get a sorted list feature result names for this sample
+                feature_result_keys = sample.feature_results.keys()
+                feature_result_keys.sort()
+                # Store length of this so we don't have to call len() each time
+                num_result_keys = len(feature_result_keys)
+
+                list_idx = 0
+                feat_idx = 0
+
+                # Iterate through the full list of features
+                while list_idx < len(sorted_feature_list) :
+                    # If the two indices are the same, then this sample
+                    # contains this feature set, so include its value
+                    if feat_idx < num_result_keys and \
+                            feature_result_keys[feat_idx] == \
+                            sorted_feature_list[list_idx] :
+                        line.write("%s," % sample.feature_results[
+                                            feature_result_keys[feat_idx]
+                                            ].value)
+                        list_idx += 1
+                        feat_idx += 1
+                    # If the two indices are not the same, then this sample
+                    # does not contain this feature set, so move on
+                    else :
+                        line.write("0,");
+                        list_idx += 1
+                        
                 # Strip trailing comma
-                data = data[:-1]
-                data += "\n"
+                data.write(line.getvalue()[:-1])
+                data.write("\n")
 
-            attribute_lines = ""
+        attribute_lines = ""
 
-            for feature_result in state.extracted[0].feature_results:
-                attr_type = "numeric"
-                
-                if type(feature_result.value) == int:
-                    attr_type = "integer"
-                
-                attribute_lines += "@attribute %s %s\n" % (feature_result.name,  attr_type)
+        for result in sorted_feature_list :
+            attribute_lines += "@attribute \"%s\" numeric\n" % result.replace("\"", "\\\"")
 
-        with open(state.corpus.path + "stylo/training-weka.arff", "w") as f:
+        attribute_lines = (attribute_lines.decode('latin-1')).encode('utf-8')
+
+        with codecs.open(state.corpus.path + "stylo/training-weka.arff", "w", "utf-8") as f:
             f.write("@relation orig_features\n\n")
             
             # Define the author attribute
@@ -188,5 +266,7 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
             corpus_authors = corpus_authors[:-2]
             f.write("%s}\n" % corpus_authors)
             
-            f.write("%s\n" % attribute_lines)
-            f.write("@data\n%s" % data)
+            f.write(attribute_lines.decode('utf-8'))
+            f.write("\n")
+
+            f.write("@data\n%s" % data.getvalue())
