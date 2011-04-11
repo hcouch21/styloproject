@@ -78,24 +78,24 @@ class NGramFreq(LinguisticFeature):
 
         # Construct unigram FeatureResults
         total = float(num_unigrams)
-#        for unigram in unigrams :
-#            result = FeatureResult("Unigram_" + unigram)
-#            result.value = unigrams[unigram] / total
-#            result_set.append(result)
+        for unigram in unigrams :
+            result = FeatureResult("Unigram_" + unigram)
+            result.value = unigrams[unigram] / total
+            result_set.append(result)
 
         # Construct bigram FeatureResults
         total = float(num_bigrams)
-#        for bigram in bigrams :
-#            result = FeatureResult("Bigram_" + bigram)
-#            result.value = bigrams[bigram] / total
-#            result_set.append(result)
+        for bigram in bigrams :
+            result = FeatureResult("Bigram_" + bigram)
+            result.value = bigrams[bigram] / total
+            result_set.append(result)
 
         # Construct trigram FeatureResults
         total = float(num_trigrams)
-#        for trigram in trigrams :
-#            result = FeatureResult("Trigram_" + trigram)
-#            result.value = trigrams[trigram] / total
-#            result_set.append(result)
+        for trigram in trigrams :
+            result = FeatureResult("Trigram_" + trigram)
+            result.value = trigrams[trigram] / total
+            result_set.append(result)
 
         # Unique unigrams
         result = FeatureResult("UniqueUnigramPct")
