@@ -89,6 +89,7 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
                 if "ranked attributes" in line.lower():
                     start_weights = True
 
+        # Use the list of features with weka weights as the full feature list
         sorted_feature_list = weka_weights.keys()
         sorted_feature_list.sort()
 
@@ -97,6 +98,8 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
         for sample in state.extracted:
             data += "?,"
 
+            # Sort list of feature results, and get count here so
+            # we aren't continually calling len()
             feature_result_keys = sample.feature_results.keys()
             feature_result_keys.sort()
             num_result_keys = len(feature_result_keys)
@@ -104,11 +107,15 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
             list_idx = 0
             feat_idx = 0
             
+            # Loop through full list of featurs
             while list_idx < len(sorted_feature_list) :
+                # If we're within the feature list of the sample..
                 if feat_idx < num_result_keys :
                     sample_feature = feature_result_keys[feat_idx]
                     sorted_feature = sorted_feature_list[list_idx]
 
+                    # If the two features are the same, then this sample
+                    # includes this feature, so add it to the list
                     if sample_feature == sorted_feature :
                         feature = sample.feature_results[sample_feature]
 
@@ -118,6 +125,9 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
 
                         # Set weight
                         feature.weight = weka_weights[sample_feature]
+                    # If sample feature is behind sorted feature alphabetically
+                    # then this feature is not in the training set, so just 
+                    # give it a weight of 0 and ignore it in the data
                     elif sample_feature < sorted_feature :
 
                         # Set weight
@@ -125,9 +135,14 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
                         feature.weight = 0
 
                         feat_idx += 1
+                    # If the sample feature is ahead of the sorted feature
+                    # then this feature is not in the sample, so give it
+                    # a value of 0 and move on
                     else :
                         data += "0,"
                         list_idx += 1
+                # If we are past all features in the sample but are still not
+                # at the end of the full feature list, just keep padding 0s
                 else :
                     data += "0,"
                     list_idx += 1
@@ -160,7 +175,7 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
             f.write("@data\n%s" % data)
             
         weka_results = Popen(["java", "-Xmx1g", "-Xms256m", "-Dfile.encoding=utf-8", self._classify_algorithm, "-t", state.corpus.path + "stylo/training-weka.arff", "-T", "classify_data.arff", "-c", "first", "-p", "0"],  stdout=PIPE).communicate()[0]
-        #os.remove("classify_data.arff")
+        os.remove("classify_data.arff")
 
         # Classify each sample
         count = 0
