@@ -101,8 +101,11 @@ class StyloCLI(object):
                     print "Sample: %s" % sample.name
                     print "================"
 
-                    for feature_result in sample.feature_results:
-                        print feature_result
+                    features = sample.feature_results.keys()
+                    features.sort()
+
+                    for feature_result in features:
+                        print sample.feature_results[feature_result]
             # Output pickled (serialized)
             else:
                 raise NotImplementedError()

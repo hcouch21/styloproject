@@ -16,6 +16,7 @@
 import ConfigParser
 import os
 import sys
+import codecs
 
 from subprocess import *
 
@@ -72,9 +73,9 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
         manager -- Plugin manager (used if we want to fire new events)
 
         """
-        
+       
         # Parse out weights
-        weka_results = Popen(["java",  self._relevance_algorithm, "-i", state.corpus.path + "stylo/training-weka.arff", "-c", "first"],  stdout=PIPE).communicate()[0]
+        weka_results = Popen(["java", "-Dfile.encoding=utf-8",  self._relevance_algorithm, "-i", state.corpus.path + "stylo/training-weka.arff", "-c", "first"],  stdout=PIPE).communicate()[0]
         weka_weights = {}
         start_weights = False
         for line in weka_results.split("\n"):
@@ -88,46 +89,61 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
                 if "ranked attributes" in line.lower():
                     start_weights = True
 
-        # Extract the full list of extracted features
-        used_features = {}
-
-        for sample in state.extracted :
-            for name in sample.feature_results.keys() :
-                if name not in used_features :
-                    used_features[name] = sample.feature_results[name]
-
-        sorted_feature_list = used_features.keys()
+        sorted_feature_list = weka_weights.keys()
         sorted_feature_list.sort()
 
         # Extract info from samples
         data = ""
         for sample in state.extracted:
             data += "?,"
-            for name in sorted_feature_list :
-                if name in sample.feature_results.keys() :
-                    data += "%s," % sample.feature_results[name].value
+
+            feature_result_keys = sample.feature_results.keys()
+            feature_result_keys.sort()
+            num_result_keys = len(feature_result_keys)
+
+            list_idx = 0
+            feat_idx = 0
+            
+            while list_idx < len(sorted_feature_list) :
+                if feat_idx < num_result_keys :
+                    sample_feature = feature_result_keys[feat_idx]
+                    sorted_feature = sorted_feature_list[list_idx]
+
+                    if sample_feature == sorted_feature :
+                        feature = sample.feature_results[sample_feature]
+
+                        data += "%s," % feature.value
+                        list_idx += 1
+                        feat_idx += 1
+
+                        # Set weight
+                        feature.weight = weka_weights[sample_feature]
+                    elif sample_feature < sorted_feature :
+
+                        # Set weight
+                        feature = sample.feature_results[sample_feature]
+                        feature.weight = 0
+
+                        feat_idx += 1
+                    else :
+                        data += "0,"
+                        list_idx += 1
                 else :
                     data += "0,"
-                
-                # Set weight
-                feature.weight = weka_weights[name]
-            
+                    list_idx += 1
+
             data = data[:-1]
             data += "\n"
-            
+
         # Write attributes
         attribute_lines = ""
-        for feature_result in sorted_feature_list :
-            attr_type = "numeric"
-            
-            if type(feature_result.value) == int:
-                attr_type = "integer"
-            
-            attribute_lines += "@attribute %s %s\n" % (feature_result.name,
-                                                       attr_type)
+        for result in sorted_feature_list :
+            attribute_lines += "@attribute \"%s\" numeric\n" % result.replace("\"", "\\\"")
+
+        #attribute_lines = (attribute_lines.decode('latin-1')).encode('utf-8')
 
         # Write info to disk
-        with open(state.corpus.path + "stylo/classify_data.arff", "w") as f:
+        with codecs.open("classify_data.arff", "w", "utf-8") as f:
             f.write("@relation train_features\n\n")
             
             # Define the author attribute
@@ -139,11 +155,12 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
             corpus_authors = corpus_authors[:-2]
             f.write("%s}\n" % corpus_authors)
             
-            f.write("%s\n" % attribute_lines)
+            f.write(attribute_lines.decode('utf-8'))
+            f.write("\n")
             f.write("@data\n%s" % data)
             
-        weka_results = Popen(["java",  self._classify_algorithm, "-t", state.corpus.path + "stylo/training-weka.arff", "-T", "classify_data.arff", "-c", "first", "-p", "0"],  stdout=PIPE).communicate()[0]
-#        os.remove("classify_data.arff")
+        weka_results = Popen(["java", "-Xmx1g", "-Xms256m", "-Dfile.encoding=utf-8", self._classify_algorithm, "-t", state.corpus.path + "stylo/training-weka.arff", "-T", "classify_data.arff", "-c", "first", "-p", "0"],  stdout=PIPE).communicate()[0]
+        #os.remove("classify_data.arff")
 
         # Classify each sample
         count = 0
@@ -233,14 +250,11 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
         attribute_lines = ""
 
         for result in sorted_feature_list :
-            attr_type = "numeric"
-                
-            if type(used_features[result].value) == int:
-                attr_type = "integer"
-                
-            attribute_lines += "@attribute \"%s\" %s\n" % (used_features[result].name.replace("\"", "\\\""),  attr_type)
+            attribute_lines += "@attribute \"%s\" numeric\n" % result.replace("\"", "\\\"")
 
-        with open(state.corpus.path + "stylo/training-weka.arff", "w") as f:
+        attribute_lines = (attribute_lines.decode('latin-1')).encode('utf-8')
+
+        with codecs.open(state.corpus.path + "stylo/training-weka.arff", "w", "utf-8") as f:
             f.write("@relation orig_features\n\n")
             
             # Define the author attribute
@@ -252,5 +266,7 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
             corpus_authors = corpus_authors[:-2]
             f.write("%s}\n" % corpus_authors)
             
-            f.write("%s\n" % attribute_lines)
+            f.write(attribute_lines.decode('utf-8'))
+            f.write("\n")
+
             f.write("@data\n%s" % data.getvalue())
