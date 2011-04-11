@@ -150,7 +150,7 @@ class Sample(object):
             self.path = path
 
         with open(self.path, "r") as f:
-            self.plain_text = f.read()
+            self.plain_text = (f.read().decode('latin-1')).encode('utf-8')
 
         tokenized = []
         for sentence in nltk.sent_tokenize(self.plain_text) :
