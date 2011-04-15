@@ -20,6 +20,7 @@ from PlugInManager import *
 from PlugInInterface import *
 
 import os
+import pickle
 import sys
 
 from optparse import OptionParser
@@ -112,7 +113,7 @@ class StyloCLI(object):
                         print sample.feature_results[feature_result]
             # Output pickled (serialized)
             else:
-                raise NotImplementedError()
+                print pickle.dumps(state.extracted[0].feature_results)
 
 if __name__ == "__main__":
     # Set CWD to location of this script
