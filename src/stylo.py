@@ -116,7 +116,7 @@ class StyloCLI(object):
 
 if __name__ == "__main__":
     # Set CWD to location of this script
-    os.chdir(os.path.dirname(__file__))
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
     
     parser = OptionParser()
     parser.add_option("-c", "--corpus", help="Specify a corpus")
