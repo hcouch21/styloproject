@@ -115,6 +115,9 @@ class StyloCLI(object):
                 raise NotImplementedError()
 
 if __name__ == "__main__":
+    # Set CWD to location of this script
+    os.chdir(os.path.dirname(__file__))
+    
     parser = OptionParser()
     parser.add_option("-c", "--corpus", help="Specify a corpus")
     parser.add_option("-f", "--features", help="Specify a list of features to use (semicolon delimited)")
