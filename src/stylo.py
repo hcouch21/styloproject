@@ -47,6 +47,7 @@ class StyloCLI(object):
 
         """
         state = RunState()
+        state.options = options
 
         # Set up the corpus
         if options.corpus:
@@ -76,11 +77,14 @@ class StyloCLI(object):
 
         # Set needed linguistic features
         if options.features is not None:
-            raise NotImplementedError()
+            pass
 
         # List features
         if options.list_features:
             self.plugin_manager.fire_event(Hooks.LISTFEATURES, state)
+            
+            for feature in state.available_features:
+                print feature
 
             sys.exit(0)
         # Train
