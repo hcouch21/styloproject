@@ -23,8 +23,8 @@ class Complexity(LinguisticFeature):
     _description -- Description of feature
 
     """
-    _short_name = "SampleComplexity"
-    _long_name = "Sample Complexity"
+    _short_name = "Complexity"
+    _long_name = "Complexity"
     _description = "Measures the complexity of the sample."
 
     def extract(self, sample):
