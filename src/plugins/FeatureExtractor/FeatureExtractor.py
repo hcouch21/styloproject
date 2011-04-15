@@ -71,8 +71,29 @@ class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
         manager -- Plugin manager (used if we want to fire new events)
 
         """
+        
+        keep_features = []
+        remove_features = []
+        
+        # If user set features, separate into yes and no groups
+        if state.options.features:
+            for feature_name in state.options.features.split(","):
+                if feature_name.startswith("-"):
+                    remove_features.append(feature_name[1:])
+                else:
+                    keep_features.append(feature_name)
+        
+        # Create available_features list if no other plugin has
+        if state.available_features is None:
+            state.available_features = []
 
+        # Now get a list of features and figure out if we want them or not
         for name in FeatureFactory.get_installed_features():
             feature = FeatureFactory.get_feature(name)
-            print feature.get_long_name() + " (" \
-		+ feature.get_short_name() + ")"
+            
+            if name in remove_features:
+                continue
+            elif (len(keep_features) > 0) and (name in keep_features):
+                state.available_features.append(feature)
+            elif len(keep_features) == 0:
+                state.available_features.append(feature)

@@ -50,3 +50,6 @@ class LinguisticFeature(object):
 
         """
         return [x for x in sample.nltk_text if x.isalnum() or len(x) > 1]
+    
+    def __str__(self):
+        return "%s - %s" % (self._short_name,  self._description)
