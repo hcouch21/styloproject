@@ -40,9 +40,10 @@ class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
         # If no features specified, use them all
         if state.features_to_extract is None:
             state.features_to_extract = []
-
-            for feature_name in FeatureFactory.get_installed_features():
-                state.features_to_extract.append(feature_name)
+            
+            manager.fire_event(Hooks.LISTFEATURES,  state)
+            for feature in state.available_features:
+                state.features_to_extract.append(feature._short_name)
 
         state.extracted = []
 
