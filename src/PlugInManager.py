@@ -38,6 +38,9 @@ class PluginManager(object):
         "ListFeatures" : [],
     }
     
+    def __init__(self):
+        self.load_plugins()
+    
     def load_plugin(self, name):
         """Loads a plugin and registers it with a call to register
 
@@ -58,7 +61,20 @@ class PluginManager(object):
             print e
 
     def load_plugins(self):
-        pass
+        try:
+            with open("enabled_plugins",  "r") as f:
+                for line in f:
+                    self.load_plugin(line.strip())
+        # File doesn't exist, we have to create it
+        except IOError:
+            self.load_plugin("ConsoleNotifier")
+            self.load_plugin("FeatureExtractor")
+            self.load_plugin("WekaAdaptor")
+            
+            with open("enabled_plugins",  "w") as f:
+                f.write("ConsoleNotifier\n")
+                f.write("FeatureExtractor\n")
+                f.write("WekaAdaptor\n")
 
     def remove_plugin(self, plugin):
         """Removes the specified plugin from callback list
