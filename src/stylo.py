@@ -30,9 +30,6 @@ class StyloCLI(object):
 
     def __init__(self):
         self.plugin_manager = PluginManager()
-        self.plugin_manager.load_plugin("ConsoleNotifier")
-        self.plugin_manager.load_plugin("FeatureExtractor")
-        self.plugin_manager.load_plugin("WekaAdaptor")
     
     def analyze(self):
         pass
