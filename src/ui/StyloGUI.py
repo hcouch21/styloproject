@@ -31,11 +31,9 @@ class StyloGUI(Frame):
         self.__Listbox1.config(yscrollcommand=self.__Scrollbar1.set)
         self.__Frame3 = Frame(self)
         self.__Frame3.pack(padx=15,pady=15,side='left')
-        self.__Canvas1 = Canvas(self.__Frame3,height=135,width=191)
-        #logoImage = PhotoImage(file="stylologo_redblack.gif")
-        #image = self.__Canvas1.create_image(0,0,anchor=NE,image=logoImage)
-        line = self.__Canvas1.create_line(0,0,191,135)
-        line = self.__Canvas1.create_line(191,0,0,135)
+        self.__Canvas1 = Canvas(self.__Frame3,height=191,width=250)
+        self.logoImage = PhotoImage(file="./stylologo_redblack.gif")
+        self.__Canvas1.create_image(125,96,image=self.logoImage)
         self.__Canvas1.pack(side='top')
         self.__Button1 = Button(self.__Frame3,text='Train',width=20, command=self.trainCorpora)
         self.__Button1.pack(side='top')
@@ -153,6 +151,17 @@ class StyloGUI(Frame):
             about.__OkayButton1.pack(anchor='s',side='bottom')
             return
         documentToAnalyze = tkFileDialog.askopenfilename(title='Select A File to Analyze')
+        if len(documentToAnalyze) <= 0:
+            return
+        analyzeProcess = subprocess.Popen(['python','../stylo.py', '-c', self.corpusPath, documentToAnalyze], stdout=subprocess.PIPE)
+        while(analyzeProcess.returncode == None):
+            analyzeProcess.poll()
+            self.__Text1.config(state=NORMAL)
+            self.__Text1.insert(END, analyzeProcess.communicate()[0])
+            self.__Text1.config(state=DISABLED)
+        self.__Text1.config(state=NORMAL)
+        self.__Text1.insert(END,"\nANALYSIS COMPLETE!\n")
+        self.__Text1.config(state=DISABLED)
         
     def trainCorpora(self):
         if(self.corpusPath ==""):
@@ -200,6 +209,7 @@ try:
     if __name__ == '__main__':
 
         Root = Tk()
+        Root.iconbitmap(default='stylo.ico')
         import Tkinter
         Tkinter.CallWrapper = rpErrorHandler.CallWrapper
         del Tkinter
