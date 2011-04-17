@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import rpErrorHandler, tkFileDialog
+import rpErrorHandler, tkFileDialog, os, subprocess, shutil
 from Tkinter import *
 #------------------------------------------------------------------------------#
 #                                                                              #
@@ -8,6 +8,10 @@ from Tkinter import *
 #                                                                              #
 #------------------------------------------------------------------------------#
 class StyloGUI(Frame):
+
+    corpusPath = ""
+    authors = []
+
     def __init__(self,Master=None,**kw):
         #
         #Your code here
@@ -20,7 +24,11 @@ class StyloGUI(Frame):
             ,text='Corpus')
         self.__Label2.pack(anchor='nw',fill='x',side='top')
         self.__Listbox1 = Listbox(self.__Frame4,height=300,width=50)
-        self.__Listbox1.pack(anchor='w',expand='yes',fill='both',side='top')
+        self.__Scrollbar1 = Scrollbar(self.__Frame4)
+        self.__Scrollbar1.pack(side=RIGHT, fill=Y)
+        self.__Listbox1.pack(side=LEFT,expand=1,fill=BOTH)
+        self.__Scrollbar1.config(command=self.__Listbox1.yview)
+        self.__Listbox1.config(yscrollcommand=self.__Scrollbar1.set)
         self.__Frame3 = Frame(self)
         self.__Frame3.pack(padx=15,pady=15,side='left')
         self.__Canvas1 = Canvas(self.__Frame3,height=135,width=191)
@@ -36,17 +44,21 @@ class StyloGUI(Frame):
         self.__Label1 = Label(self.__Frame3,anchor='w',justify='left'
             ,text='Progress')
         self.__Label1.pack(anchor='sw',side='top')
-        self.__Text1 = Text(self.__Frame3,height=12)
+        self.__Text1 = Text(self.__Frame3,height=12,state=DISABLED)
+        self.__Scrollbar2 = Scrollbar(self.__Frame3)
+        self.__Scrollbar2.pack(side=RIGHT, fill=Y)
         self.__Text1.pack(anchor='s',side='top')
+        self.__Scrollbar2.config(command=self.__Text1.yview)
+        self.__Text1.config(yscrollcommand=self.__Scrollbar2.set)
         #
         #Your code here
         #
         menubar = Menu(Master)
         filemenu = Menu(menubar, tearoff=0)
-        filemenu.add_command(label="Open File", command=self.openFile)
+        filemenu.add_command(label="Add A File To The Corpus", command=self.openFile)
+        filemenu.add_command(label="Select Corpus", command=self.openCorpora)
         filemenu.add_command(label="Quit",command=self.closeStylo)
         toolsmenu = Menu(menubar, tearoff=0)
-        toolsmenu.add_command(label="Manage Corpora", command=self.openCorpora)
         toolsmenu.add_command(label="Manage Feature Sets", command=self.openFeatureSets)
         toolsmenu.add_command(label="Manage Plugins", command=self.openPlugins)
         helpmenu = Menu(menubar, tearoff=0)
@@ -65,11 +77,44 @@ class StyloGUI(Frame):
     #Start of non-Rapyd user code
     #
     def openFile(self):
-        newFileName = tkFileDialog.askopenfilename(title="Select A File to Add to the Corpus")
-        if(len(newFileName) > 0):
-            print("Add new File " + newFileName)
-        else:
-            print("Canceled")
+        if self.corpusPath == "":
+            about = Toplevel()
+            about.__Label1 = Label(about,anchor='nw',justify='left', padx=15,pady=15 ,text='A corpus must be selected before it can have files added to it!')
+            about.__Label1.pack(anchor='nw',side='top')
+            about.__OkayButton1 = Button(about, anchor='s',justify='center', text='Okay', command=about.destroy)
+            about.__OkayButton1.pack(anchor='s',side='bottom')
+            return
+        self.newFileName = tkFileDialog.askopenfilename(title="Select A File to Add to the Corpus")
+        if(len(self.newFileName) <= 0):
+            return
+        self.authorSelect = Toplevel()
+        self.authorSelect.__Label1 = Label(self.authorSelect,anchor='nw',justify='left', padx=15,pady=15 ,text='Select an author, or add a new one!')
+        self.authorSelect.__Label1.pack(anchor='nw',side='top')
+        
+        self.selection = StringVar()
+        self.selection.set("Other")
+        self.customselection = StringVar()
+        self.customselection.set("")
+        
+        for author in self.authors:
+            b = Radiobutton(self.authorSelect, text=author, variable=self.selection, value=author)
+            b.pack(anchor='w')
+        b = Radiobutton(self.authorSelect, text="Other", variable=self.selection, value="Other")
+        b.pack(anchor='w')
+        self.authorSelect.__Entry1 = Entry(self.authorSelect, textvariable=self.customselection)
+        self.authorSelect.__Entry1.pack(anchor='w')
+        self.authorSelect.__Button1 = Button(self.authorSelect, text="Okay", command=self.addFile)
+        self.authorSelect.__Button1.pack()
+        
+    def addFile(self):
+        newAuthor = self.selection.get()
+        if(self.selection.get() == "Other"):
+            newAuthor = self.customselection.get()
+        self.authorSelect.destroy()
+        if self.authors.count(newAuthor) == 0:
+            os.mkdir(self.corpusPath+"/"+newAuthor)
+        shutil.copy(self.newFileName,self.corpusPath+"/"+newAuthor+"/"+self.newFileName.split("/")[-1])
+        self.updateCorpus()
     
     def closeStylo(self):
         print("I should totally do some cleanup before exiting. LOL!")
@@ -84,18 +129,53 @@ class StyloGUI(Frame):
         about.__Label1.pack(anchor='nw',side='top')
 
     def openCorpora(self):
-        newCorpusName = tkFileDialog.askdirectory(parent=self,initialdir="/",title='Please select the Corpus Directory')
-        if(len(newCorpusName) > 0):
-            print("Selected " + newCorpusName)
-        else:
-            print("Canceled")
-            
+        newCorpusName = tkFileDialog.askdirectory(parent=self,initialdir="../corpora/",title='Please select the Corpus Directory')
+        if(len(newCorpusName) <= 0): #No corpus selected
+            return
+        self.corpusPath = newCorpusName
+        self.updateCorpus()
+        
+    def updateCorpus(self):
+        self.__Listbox1.delete(0,END)
+        self.authors = []
+        for author in os.listdir(self.corpusPath):
+            self.__Listbox1.insert(END,author)
+            self.authors.append(author)
+            for work in os.listdir(self.corpusPath+"/"+author):
+                self.__Listbox1.insert(END, "  " + work)
+    
     def analyzeDocument(self):
+        if self.corpusPath == "":
+            about = Toplevel()
+            about.__Label1 = Label(about,anchor='nw',justify='left', padx=15,pady=15 ,text='A corpus must be selected before it can analyze any files!')
+            about.__Label1.pack(anchor='nw',side='top')
+            about.__OkayButton1 = Button(about, anchor='s',justify='center', text='Okay', command=about.destroy)
+            about.__OkayButton1.pack(anchor='s',side='bottom')
+            return
         documentToAnalyze = tkFileDialog.askopenfilename(title='Select A File to Analyze')
         
     def trainCorpora(self):
-        self.__Text1.insert(END,"BEGINNING TRAINING PROCESS\n")
-        self.__Text1.insert(END,"TRAINING PROCESS COMPLETE\n")
+        if(self.corpusPath ==""):
+            about = Toplevel()
+            about.__Label1 = Label(about,anchor='nw',justify='left', padx=15,pady=15 ,text='A corpus must be selected before it can be trained on!')
+            about.__Label1.pack(anchor='nw',side='top')
+            about.__OkayButton1 = Button(about, anchor='s',justify='center', text='Okay', command=about.destroy)
+            about.__OkayButton1.pack(anchor='s',side='bottom')
+            return
+        trainProcess = subprocess.Popen(['python','../stylo.py', '-c', self.corpusPath, '-t'], stdout=subprocess.PIPE)
+        while(trainProcess.returncode == None):
+            trainProcess.poll()
+            self.__Text1.config(state=NORMAL)
+            self.__Text1.insert(END, trainProcess.communicate()[0])
+            self.__Text1.config(state=DISABLED)
+        if(trainProcess.returncode == 0):
+            self.__Text1.config(state=NORMAL)
+            self.__Text1.insert(END,"\nTRAINING PROCESS SUCCESSFUL\n")
+            self.__Text1.config(state=DISABLED)
+        else:
+            self.__Text1.config(state=NORMAL)
+            self.__Text1.insert(END,"\nTRAINING PROCESS FAILED!\n")
+            self.__Text1.config(state=DISABLED)
 		
     def openFeatureSets(self):
         print("Here are some sets...of features.")
