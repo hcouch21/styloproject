@@ -110,7 +110,11 @@ class StyloCLI(object):
                         print sample.feature_results[feature_result]
             # Output pickled (serialized)
             else:
-                print pickle.dumps(state.extracted[0].feature_results)
+                feature_results = []
+                for sample in state.extracted :
+                    feature_results.extend(sample.feature_results.values())
+
+                print pickle.dumps(feature_results)
 
 if __name__ == "__main__":
     # Set CWD to location of this script
