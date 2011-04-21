@@ -1,4 +1,3 @@
-import os.path
 #    This file is part of Stylo.
 #
 #    Stylo is free software: you can redistribute it and/or modify
@@ -14,11 +13,17 @@ import os.path
 #    You should have received a copy of the GNU General Public License
 #    along with Stylo.  If not, see <http://www.gnu.org/licenses
 
+import contextlib
+import random
+import shutil
+import struct
 import sys
 import os
+import os.path
+import zipfile
 
 try:
-    import Crypto
+    from Crypto.Cipher import AES
 except:
     print "PyCrypto not installed, corpus encryption is not available"
 
@@ -39,6 +44,7 @@ class Corpus(object):
     name = None
     authors = None
     uses_encryption = False
+    password = None
     path = None
     
     _loaded = False
@@ -65,6 +71,15 @@ class Corpus(object):
         return len(self.authors)
 
     def load(self, password=None):
+        if self._loaded:
+            return
+        
+        if self.uses_encryption:
+            self.password = password
+            self.decrypt(password)
+            self.decompress()
+        
+        #print "Loading corpus %s" % self.name
         author_names = os.listdir(self.path)
 
         try:
@@ -81,14 +96,51 @@ class Corpus(object):
     def __str__(self):
         return "%s - %d authors" % (self.name, len(self.authors))
 
-    def save(self, password=None):
-        pass
+    def save(self):
+        # Nothing to do if its not encrypted
+        if not self.uses_encryption:
+            return
+        
+        self.compress()
+        self.encrypt(self.password)
+    
+    def compress(self):
+        print "Archiving..."
+        
+        basedir = self.path
+        archivename = "corpora/%s.zip" % self.name
+        assert os.path.isdir(basedir)
+        with contextlib.closing(zipfile.ZipFile(archivename, "w", zipfile.ZIP_DEFLATED)) as z:
+            for root, dirs, files in os.walk(basedir):
+                # Empty directories are ignored
+                for fn in files:
+                    absolute_file_name = os.path.join(root, fn)
+                    zip_file_name = self.name + os.sep + absolute_file_name[len(basedir)+len(os.sep) - 1:]
+                    z.write(absolute_file_name, zip_file_name)
+        
+        try:
+            shutil.rmtree(self.path)
+        except:
+            print "Failed to remove corpus directory"
+    
+    def decompress(self):
+        print "Un-archiving..."
+        
+        with zipfile.ZipFile("corpora/%s.zip" % self.name , "r") as z:
+            z.extractall("corpora/")
+        
+        os.remove("corpora/" + self.name + ".zip")
 
-    def _encrypt(self, password):
-        pass
+    def encrypt(self, password):
+        self.uses_encryption = True
+        print "Encrypting..."
+        encrypt_file(password,  "corpora/" + self.name + ".zip", "corpora/" + self.name + ".sec")
+        os.remove("corpora/" + self.name + ".zip")
 
-    def _decrypt(self, password):
-        pass
+    def decrypt(self, password):
+        print "Decrypting..."
+        decrypt_file(password, "corpora/" + self.name + ".sec", "corpora/" + self.name + ".zip")
+        os.remove("corpora/" + self.name + ".sec")
 
     @staticmethod
     def get_all_corpora():
@@ -96,7 +148,12 @@ class Corpus(object):
         corpora_names = os.listdir("./corpora/")
 
         for name in corpora_names:
-            avail_corpora.append(Corpus(name))
+            if name.endswith(".sec"):
+                c = Corpus(name[:-4])
+                c.uses_encryption = True
+                avail_corpora.append(c)
+            else:
+                avail_corpora.append(Corpus(name))
 
         return avail_corpora
 
@@ -156,6 +213,9 @@ class Sample(object):
         for sentence in nltk.sent_tokenize(self.plain_text) :
             tokenized += nltk.word_tokenize(sentence)
         self.nltk_text = nltk.Text(tokenized)
+    
+    def __str__(self):
+        return self.name
 
 class FeatureResult(object):
     """Stores the value after a linguistic feature is extracted
