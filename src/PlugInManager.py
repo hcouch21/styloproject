@@ -82,7 +82,10 @@ class PluginManager(object):
         plugin -- Plugin object to remove
 
         """
-        pi = self._plug_ins[plugin]
+        
+        pi = None
+        if plugin in self._plug_ins.keys():
+            pi = self._plug_ins[plugin]
         
         if pi is not None:
             pi.unregister(self._hooks)
