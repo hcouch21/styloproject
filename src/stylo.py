@@ -19,6 +19,7 @@ from Domain import *
 from PlugInManager import *
 from PlugInInterface import *
 
+import getpass
 import os
 import pickle
 import sys
@@ -52,7 +53,19 @@ class StyloCLI(object):
             for c in Corpus.get_all_corpora():
                 if c.name == options.corpus:
                     state.corpus = c
-                    state.corpus.load()
+                    if not state.corpus.uses_encryption:
+                        state.corpus.load()
+                    elif state.corpus.uses_encryption and state.options.key:
+                        state.corpus.load(state.options.key)
+                    else:
+                        pw = getpass.getpass("Key: ")
+                        while len(pw) not in [16,  24,  32]:
+                            print "Key must be 16, 24, or 32 characters long"
+                            pw = getpass.getpass("Key: ")
+
+                        print "Key accepted"
+                        state.options.key = pw
+                        state.corpus.load(state.options.key)
                     break
 
             # If the specified corpus doesn't exist
@@ -90,6 +103,23 @@ class StyloCLI(object):
             state.training = True
             self.plugin_manager.fire_event(Hooks.TRAINSTART, state)
             self.plugin_manager.fire_event(Hooks.TRAINSTOP, state)
+        # Encrypt
+        elif options.encrypt:
+            if not state.options.key:
+                pw = getpass.getpass("Key: ")
+                while len(pw) not in [16,  24,  32]:
+                    print "Key must be 16, 24, or 32 characters long"
+                    pw = getpass.getpass("Key: ")
+                
+                print "Key accepted"
+                state.options.key = pw
+            
+            state.corpus.compress()
+            state.corpus.encrypt(state.options.key)
+            sys.exit(0)
+        # Decrypt
+        elif options.decrypt:
+            sys.exit(0)
         # Classify
         else:
             self.plugin_manager.fire_event(Hooks.EXTRACTSTART, state)
@@ -115,6 +145,8 @@ class StyloCLI(object):
                     feature_results.extend(sample.feature_results.values())
 
                 print pickle.dumps(feature_results)
+        
+        state.corpus.save()
 
 if __name__ == "__main__":
     # Set CWD to location of this script
@@ -127,6 +159,9 @@ if __name__ == "__main__":
     parser.add_option("-l", "--list-features", action="store_true", help="Lists all available features")
     parser.add_option("-t", "--train", action="store_true", help="Train Stylo against specified corpus")
     parser.add_option("-p", "--pickle", action="store_true", help="Output pickled version of the results")
+    parser.add_option("-e", "--encrypt", action="store_true", help="Encrypt the specified corpus.")
+    parser.add_option("-d", "--decrypt", action="store_true", help="Decrypt the specified corpus.")
+    parser.add_option("-k", "--key", help="Key to use for encryption or decryption of corpus.")
 
     (options, args) = parser.parse_args()
 
