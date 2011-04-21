@@ -47,6 +47,10 @@ class PluginManager(object):
         name -- Name of the plugin to load (module name as well as class name)
 
         """
+        
+        # Check if plugin already loaded
+        if name in self._plug_ins.keys():
+            return
 
         mod = None
 
