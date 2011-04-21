@@ -47,6 +47,14 @@ class StyloCLI(object):
         """
         state = RunState()
         state.options = options
+        
+        # Enable/disable plugins specified on the command line
+        if options.plugins:
+            for plugin_name in options.plugins.split(","):
+                if plugin_name.startswith("-"):
+                    self.plugin_manager.remove_plugin(plugin_name[1:])
+                else:
+                    self.plugin_manager.load_plugin(plugin_name)
 
         # Set up the corpus
         if options.corpus:
@@ -159,6 +167,7 @@ if __name__ == "__main__":
     parser.add_option("-l", "--list-features", action="store_true", help="Lists all available features")
     parser.add_option("-t", "--train", action="store_true", help="Train Stylo against specified corpus")
     parser.add_option("-p", "--pickle", action="store_true", help="Output pickled version of the results")
+    parser.add_option("-P", "--plugins", help="Specify plugins to enable/disable")
     parser.add_option("-e", "--encrypt", action="store_true", help="Encrypt the specified corpus.")
     parser.add_option("-d", "--decrypt", action="store_true", help="Decrypt the specified corpus.")
     parser.add_option("-k", "--key", help="Key to use for encryption or decryption of corpus.")
