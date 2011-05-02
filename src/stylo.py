@@ -138,21 +138,34 @@ class StyloCLI(object):
             # Output human readable
             if not options.pickle:
                 for sample in state.extracted:
-                    print "Sample: %s" % sample.name
-                    print "================"
-
                     features = sample.feature_results.keys()
                     features.sort()
 
-                    for feature_result in features:
-                        print sample.feature_results[feature_result]
+                    if not options.output:
+                        print "Sample: %s" % sample.name
+                        print "================"
+                        
+                        for feature_result in features:
+                            print sample.feature_results[feature_result]
+                    else:
+                        with open(options.output, "a") as f:
+                            f.write("Sample: %s\n" % sample.name)
+                            f.write("================\n")
+                            
+                            for feature_result in features:
+                                f.write(str(sample.feature_results[feature_result]))
+                                f.write("\n");
             # Output pickled (serialized)
             else:
                 feature_results = []
                 for sample in state.extracted :
                     feature_results.extend(sample.feature_results.values())
 
-                print pickle.dumps(feature_results)
+                if not options.output:
+                    print pickle.dumps(feature_results)
+                else:
+                    with open(options.output, "w") as f:
+                        pickle.dump(feature_results, f);
         
         state.corpus.save()
 
@@ -171,6 +184,7 @@ if __name__ == "__main__":
     parser.add_option("-e", "--encrypt", action="store_true", help="Encrypt the specified corpus.")
     parser.add_option("-d", "--decrypt", action="store_true", help="Decrypt the specified corpus.")
     parser.add_option("-k", "--key", help="Key to use for encryption or decryption of corpus.")
+    parser.add_option("-o", "--output", help="Specify the file or folder to output to.")
 
     (options, args) = parser.parse_args()
 
