@@ -28,6 +28,8 @@ from PlugInInterface import *
 class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
     _classify_algorithm = "weka.classifiers.bayes.NaiveBayes"
     _relevance_algorithm = "weka.attributeSelection.ReliefFAttributeEval"
+
+    _train_header_prefix = "% stylo_features "
     
     def __init__(self):
         config = ConfigParser.RawConfigParser()
@@ -73,6 +75,41 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
         manager -- Plugin manager (used if we want to fire new events)
 
         """
+
+        # Verify that the same features are being used as when training
+        with codecs.open(state.corpus.path + "stylo/training-weka.arff", "r", "utf-8") as f:
+            # Read the first line
+            comment = f.readline()[:-1]
+
+            reject = False
+
+            # Make sure it's a comment
+            if not comment.startswith(self._train_header_prefix) :
+                reject = True
+            else :
+                # Make sure the feature sets match
+                current_features = state.features_to_extract
+                current_features.sort()
+
+                trained_features = (comment.split(" ")[2]).split(",")
+                trained_features.sort()
+
+                if len(current_features) != len(trained_features) :
+                    reject = True
+                else :
+                    # Linear search to check feature equality
+                    for i in range(len(current_features)) :
+                        if current_features[i] != trained_features[i] :
+                            reject = True
+                            break
+
+            # If the train file is not valid, throw an error and exit
+            if reject :
+                print "Error: Training file is not a valid Stylo training " + \
+                        "file.\n       Please run Stylo training again or " + \
+                        "classify using\n       the same feature set as " + \
+                        "training set."
+                sys.exit(1)
        
         # Parse out weights
         weka_results = Popen(["java", "-Dfile.encoding=utf-8",  self._relevance_algorithm, "-i", state.corpus.path + "stylo/training-weka.arff", "-c", "first"],  stdout=PIPE).communicate()[0]
@@ -270,6 +307,10 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
         attribute_lines = (attribute_lines.decode('latin-1')).encode('utf-8')
 
         with codecs.open(state.corpus.path + "stylo/training-weka.arff", "w", "utf-8") as f:
+            # Write a comment declaring the featureset used
+            f.write(self._train_header_prefix);
+            f.write("%s\n" % ",".join(state.features_to_extract));
+
             f.write("@relation orig_features\n\n")
             
             # Define the author attribute
