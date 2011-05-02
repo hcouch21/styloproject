@@ -164,7 +164,7 @@ class StyloCLI(object):
                 if not options.output:
                     print pickle.dumps(feature_results)
                 else:
-                    with open(options.output, "w") as f:
+                    with open(options.output, "wb") as f:
                         pickle.dump(feature_results, f);
         
         state.corpus.save()
