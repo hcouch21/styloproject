@@ -78,7 +78,8 @@ class StyloCLI(object):
 
             # If the specified corpus doesn't exist
             if state.corpus is None:
-                print "Could not find corpus with name: %s" % options.corpus
+                print >> sys.stderr, "Could not find corpus with name: %s" % \
+                                        options.corpus
                 sys.exit(1)
 
         # Set up the input file
@@ -92,7 +93,8 @@ class StyloCLI(object):
                     state.to_extract = []
                     state.to_extract.append(Sample(options.input))
             else:
-                print "Could not find file or path: %s" % options.input
+                print >> sys.stderr, "Could not find file or path: %s" % \
+                                        options.input
 
         # Set needed linguistic features
         if options.features is not None:

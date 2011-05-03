@@ -25,12 +25,13 @@ import zipfile
 try:
     from Crypto.Cipher import AES
 except:
-    print "PyCrypto not installed, corpus encryption is not available"
+    print >> sys.stderr, "PyCrypto not installed, " + \
+                           "corpus encryption is not available"
 
 try:
     import nltk
 except:
-    print "NLTK must be installed for Stylo to run."
+    print >> sys.stderr, "NLTK must be installed for Stylo to run."
     sys.exit(1)
 
 class Corpus(object):
@@ -79,7 +80,6 @@ class Corpus(object):
             self.decrypt(password)
             self.decompress()
         
-        #print "Loading corpus %s" % self.name
         author_names = os.listdir(self.path)
 
         try:
@@ -121,7 +121,7 @@ class Corpus(object):
         try:
             shutil.rmtree(self.path)
         except:
-            print "Failed to remove corpus directory"
+            print >> sys.stderr, "Failed to remove corpus directory"
     
     def decompress(self):
         print "Un-archiving..."
@@ -174,7 +174,6 @@ class Author(object):
         self.path = path + name + "/"
         self.samples = []
 
-        #print "Loading author: %s" % self.path
         for sample_file in os.listdir(self.path):
             self.samples.append(Sample(self.path, sample_file))
 

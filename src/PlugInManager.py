@@ -14,6 +14,7 @@
 #    along with Stylo.  If not, see <http://www.gnu.org/licenses/>.
 
 import imp
+import sys
 
 from PlugInInterface import *
 
@@ -61,8 +62,8 @@ class PluginManager(object):
             self._plug_ins[name] = pi
         # Couldn't load the plugin, probably because of import error
         except Exception as e:
-            print "Failed to load plugin %s." % name
-            print e
+            print >> sys.stderr, "Failed to load plugin %s." % name
+            print >> sys.stderr, e
 
     def load_plugins(self):
         try:
