@@ -11,9 +11,12 @@ class StyloGUI(Frame):
 
     corpusPath = ""
     authors = []
+    authorIndexes = []
     lastPath = ""
     userSettings = {}
     hiddenDeleteDir = ""
+    filesToAdd = []
+    addedFiles = []
 
     def __init__(self,Master=None,**kw):
         #
@@ -60,7 +63,7 @@ class StyloGUI(Frame):
         filemenu.add_command(label="Add A Folder of Files to the Corpus", command=self.openFolder)
         filemenu.add_command(label="Remove Selected Files From the Corpus", command=self.removeFiles)
         filemenu.add_command(label="Select Corpus", command=self.openCorpora)
-        filemenu.add_command(label="Save Corpus", command=self.saveCorpus)
+        #filemenu.add_command(label="Save Corpus", command=self.saveCorpus)
         filemenu.add_command(label="Quit",command=self.destroy)
         toolsmenu = Menu(menubar, tearoff=0)
         toolsmenu.add_command(label="Manage Feature Sets", command=self.openFeatureSets)
@@ -96,10 +99,9 @@ class StyloGUI(Frame):
             about.__OkayButton1.pack(anchor='s',side='bottom')
             return
         folderLoc = tkFileDialog.askdirectory(parent=self,initialdir=self.corpusPath,title='Please select the Folder containing the files')
-        filesToAdd = []
         for work in os.listdir(folderLoc):
-            filesToAdd.append(folderLoc+"/"+work)
-        #TODO: FINISH THIS, FIX ADDING A SINGLE FILE
+            self.filesToAdd.append(folderLoc+"/"+work)
+        self.openAddDialog()
     
     def openFile(self):
         if self.corpusPath == "":
@@ -109,12 +111,18 @@ class StyloGUI(Frame):
             about.__OkayButton1 = Button(about, anchor='s',justify='center', text='Okay', command=about.destroy)
             about.__OkayButton1.pack(anchor='s',side='bottom')
             return
-        self.newFileName = tkFileDialog.askopenfilename(title="Select A File to Add to the Corpus")
-        if(len(self.newFileName) <= 0):
+        newFileName = tkFileDialog.askopenfilename(title="Select A File to Add to the Corpus")
+        if(len(newFileName) <= 0):
             return
+        self.filesToAdd.append(newFileName)
+        self.openAddDialog()
+        
+    def openAddDialog(self):
         self.authorSelect = Toplevel()
         self.authorSelect.__Label1 = Label(self.authorSelect,anchor='nw',justify='left', padx=15,pady=15 ,text='Select an author, or add a new one!')
         self.authorSelect.__Label1.pack(anchor='nw',side='top')
+        self.authorSelect.__Label2 = Label(self.authorSelect,anchor='nw',justify='left', padx=15,pady=15 ,text='Document: ' + self.filesToAdd[0].split('/')[-1])
+        self.authorSelect.__Label2.pack(anchor='nw',side='top')
         
         self.selection = StringVar()
         self.selection.set("Other")
@@ -141,14 +149,28 @@ class StyloGUI(Frame):
         self.authorSelect.destroy()
         if self.authors.count(newAuthor) == 0:
             os.mkdir(self.corpusPath+"/"+newAuthor)
-        shutil.copy(self.newFileName,self.corpusPath+"/"+newAuthor+"/"+self.newFileName.split("/")[-1])
+        shutil.copy(self.filesToAdd[0],self.corpusPath+"/"+newAuthor+"/"+self.filesToAdd[0].split("/")[-1])
+        self.addedFiles.append(self.corpusPath+"/"+newAuthor+"/"+self.filesToAdd[0].split("/")[-1])
+        if len(self.filesToAdd) > 1:
+            self.filesToAdd = self.filesToAdd[1:]
+            self.openAddDialog()
+        else:
+            self.filesToAdd = []
         self.updateCorpus()
         
     def removeFiles(self):
         if self.hiddenDeleteDir=="":
             self.hiddenDeleteDir = tempfile.mkdtemp()
         for file in self.__Listbox1.curselection():
-            print self.__Listbox1.get(file)
+            fileIndex = int(file)
+            author = 0
+            for authorIndex in range(len(self.authorIndexes) - 1):
+                if fileIndex > self.authorIndexes[authorIndex] and fileIndex < self.authorIndexes[authorIndex + 1]:
+                    author = authorIndex
+                    break
+            path = self.corpusPath+"/" + self.authors[author] + "/" + self.__Listbox1.get(file).lstrip()
+            os.remove(path)
+        self.updateCorpus()
         
     def destroy(self):
         outputfile = open('./guisettings.sgo','w')
@@ -177,7 +199,9 @@ class StyloGUI(Frame):
     def updateCorpus(self):
         self.__Listbox1.delete(0,END)
         self.authors = []
+        self.authorIndexes = []
         for author in os.listdir(self.corpusPath):
+            self.authorIndexes.append(self.__Listbox1.size())
             self.__Listbox1.insert(END,author)
             self.authors.append(author)
             for work in os.listdir(self.corpusPath+"/"+author):
@@ -194,7 +218,6 @@ class StyloGUI(Frame):
         documentToAnalyze = tkFileDialog.askopenfilename(title='Select A File to Analyze')
         if len(documentToAnalyze) <= 0:
             return
-        print documentToAnalyze
         analyzeProcess = subprocess.Popen(['python','../stylo.py', '-c', self.corpusPath.split("/")[-1], documentToAnalyze], stdout=subprocess.PIPE)
         while(analyzeProcess.returncode == None):
             analyzeProcess.poll()
