@@ -29,7 +29,7 @@ class StyloGUI(Frame):
         self.__Label2 = Label(self.__Frame4,anchor='nw',justify='left'
             ,text='Corpus')
         self.__Label2.pack(anchor='nw',fill='x',side='top')
-        self.__Listbox1 = Listbox(self.__Frame4,height=300,width=50, selectmode=MULTIPLE)
+        self.__Listbox1 = Listbox(self.__Frame4,height=300,width=40, selectmode=MULTIPLE)
         self.__Scrollbar1 = Scrollbar(self.__Frame4)
         self.__Scrollbar1.pack(side=RIGHT, fill=Y, anchor='e')
         self.__Listbox1.pack(side=LEFT,expand=1,fill=BOTH, anchor='w')
@@ -200,6 +200,7 @@ class StyloGUI(Frame):
         self.__Listbox1.delete(0,END)
         self.authors = []
         self.authorIndexes = []
+        self.__Label2.configure(text="Corpus: " + self.corpusPath.split('/')[-1])
         for author in os.listdir(self.corpusPath):
             self.authorIndexes.append(self.__Listbox1.size())
             self.__Listbox1.insert(END,author)
@@ -274,7 +275,10 @@ try:
     if __name__ == '__main__':
 
         Root = Tk()
-        Root.iconbitmap(default='stylo.ico')
+        try:
+		    Root.iconbitmap(default='stylo.ico')
+        except:
+		    a = 0 #Don't do anything
         import Tkinter
         Tkinter.CallWrapper = rpErrorHandler.CallWrapper
         del Tkinter
