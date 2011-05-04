@@ -35,9 +35,14 @@ class Readability(LinguisticFeature):
         
         results = []
         
-        # FleschReadingEase
-        result = FeatureResult("FleschReadingEase")
+        # Automated Readability Index (ARI)
+        result = FeatureResult("AutomatedReadabilityIndex")
         result.value = 4.71 * (self.char_count / self.word_count) + 0.5 * (self.word_count / self.sentence_count) - 21.43
+        results.append(result)
+        
+        # Flesch Reading Ease (FRE)
+        result = FeatureResult("FleschReadingEase")
+        result.value = 206.835 - (1.015 * (self.word_count / self.sentence_count)) - (84.6 * (self.syllable_count / self.word_count))
         results.append(result)
         
         return results
