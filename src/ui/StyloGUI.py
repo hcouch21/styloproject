@@ -82,7 +82,8 @@ class StyloGUI(Frame):
         if os.path.exists('./guisettings.sgo'):
             settingsFile = open('./guisettings.sgo','r')
             self.userSettings = pickle.load(settingsFile)
-            self.corpusPath = self.userSettings['lastCorpus']
+            if self.userSettings.has_key('lastCorpus'):
+                self.corpusPath = self.userSettings['lastCorpus']
             self.updateCorpus()
     #
     #Start of event handler methods
@@ -227,6 +228,7 @@ class StyloGUI(Frame):
         self.deleteCorpus.destroy()
         shutil.rmtree(self.corpusPath)
         self.corpusPath = ""
+        self.userSettings['lastCorpus'] = ""
         self.updateCorpus()
         
     def openCorpora(self):
