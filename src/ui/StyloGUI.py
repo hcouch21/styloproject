@@ -69,6 +69,7 @@ class StyloGUI(Frame):
         toolsmenu.add_command(label="Manage Feature Sets", command=self.openFeatureSets)
         toolsmenu.add_command(label="Manage Plugins", command=self.openPlugins)
         toolsmenu.add_command(label="Create A New Corpus", command=self.newCorpus)
+        toolsmenu.add_command(label="Delete This Corpus", command=self.deleteCorpus)
         helpmenu = Menu(menubar, tearoff=0)
         helpmenu.add_command(label="Help", command=self.openHelp)
         helpmenu.add_command(label="About",command=self.openAbout)
@@ -151,12 +152,12 @@ class StyloGUI(Frame):
             os.mkdir(self.corpusPath+"/"+newAuthor)
         shutil.copy(self.filesToAdd[0],self.corpusPath+"/"+newAuthor+"/"+self.filesToAdd[0].split("/")[-1])
         self.addedFiles.append(self.corpusPath+"/"+newAuthor+"/"+self.filesToAdd[0].split("/")[-1])
+        self.updateCorpus()
         if len(self.filesToAdd) > 1:
             self.filesToAdd = self.filesToAdd[1:]
             self.openAddDialog()
         else:
             self.filesToAdd = []
-        self.updateCorpus()
         
     def removeFiles(self):
         if self.hiddenDeleteDir=="":
@@ -186,7 +187,47 @@ class StyloGUI(Frame):
         about.__Label1.pack(anchor='nw',side='top')
 
     def newCorpus(self):
-        print "TODO"
+        self.newCorpus = Toplevel()
+        self.newCorpus.__Label1 = Label(self.newCorpus,anchor='nw',justify='left', padx=15,pady=15 ,text='What would you like to call this new corpus?')
+        self.newCorpus.__Label1.pack(anchor='nw',side='top')
+        self.newCorpusName = StringVar()
+        self.newCorpusName.set("")
+        self.newCorpus.__Entry1 = Entry(self.newCorpus, textvariable=self.newCorpusName)
+        self.newCorpus.__Entry1.pack(anchor='w')
+        self.newCorpus.__Button1 = Button(self.newCorpus, text="Okay", command=self.addCorpus)
+        self.newCorpus.__Button1.pack()
+        
+    def addCorpus(self):
+        newCorpus = self.newCorpusName.get()
+        self.newCorpus.destroy()
+        if len(newCorpus) <= 0:
+            return
+        newCorpus = "../corpora/" + newCorpus 
+        os.mkdir(newCorpus)
+        self.corpusPath = newCorpus
+        self.updateCorpus()
+        
+    def deleteCorpus(self):
+        if self.corpusPath == "":
+            about = Toplevel()
+            about.__Label1 = Label(about,anchor='nw',justify='left', padx=15,pady=15 ,text='A corpus must be selected before it can be deleted!')
+            about.__Label1.pack(anchor='nw',side='top')
+            about.__OkayButton1 = Button(about, anchor='s',justify='center', text='Okay', command=about.destroy)
+            about.__OkayButton1.pack(anchor='s',side='bottom')
+            return
+        self.deleteCorpus = Toplevel()
+        self.deleteCorpus.__Label1 = Label(self.deleteCorpus,anchor='nw',justify='left', padx=15,pady=15 ,text='Are you sure you want to delete this corpus?')
+        self.deleteCorpus.__Label1.pack(anchor='nw',side='top')
+        self.deleteCorpus.__Button1 = Button(self.deleteCorpus, text="Yes", command=self.reallyDeleteCorpus)
+        self.deleteCorpus.__Button1.pack(anchor='w')
+        self.deleteCorpus.__Button2 = Button(self.deleteCorpus, text="No", command=self.deleteCorpus.destroy)
+        self.deleteCorpus.__Button2.pack(anchor='e')
+    
+    def reallyDeleteCorpus(self):
+        self.deleteCorpus.destroy()
+        shutil.rmtree(self.corpusPath)
+        self.corpusPath = ""
+        self.updateCorpus()
         
     def openCorpora(self):
         newCorpusName = tkFileDialog.askdirectory(parent=self,initialdir="../corpora/",title='Please select the Corpus Directory')
@@ -201,6 +242,8 @@ class StyloGUI(Frame):
         self.authors = []
         self.authorIndexes = []
         self.__Label2.configure(text="Corpus: " + self.corpusPath.split('/')[-1])
+        if self.corpusPath == "":
+            return
         for author in os.listdir(self.corpusPath):
             self.authorIndexes.append(self.__Listbox1.size())
             self.__Listbox1.insert(END,author)
