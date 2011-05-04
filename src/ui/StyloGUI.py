@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import rpErrorHandler, tkFileDialog, os, subprocess, shutil
+import rpErrorHandler, tkFileDialog, os, subprocess, shutil, pickle, tempfile, shutil
 from Tkinter import *
 #------------------------------------------------------------------------------#
 #                                                                              #
@@ -11,11 +11,17 @@ class StyloGUI(Frame):
 
     corpusPath = ""
     authors = []
+    authorIndexes = []
+    lastPath = ""
+    userSettings = {}
+    hiddenDeleteDir = ""
+    filesToAdd = []
+    addedFiles = []
 
     def __init__(self,Master=None,**kw):
         #
         #Your code here
-        #
+        # 
         
         apply(Frame.__init__,(self,Master),kw)
         self.__Frame4 = Frame(self)
@@ -23,10 +29,10 @@ class StyloGUI(Frame):
         self.__Label2 = Label(self.__Frame4,anchor='nw',justify='left'
             ,text='Corpus')
         self.__Label2.pack(anchor='nw',fill='x',side='top')
-        self.__Listbox1 = Listbox(self.__Frame4,height=300,width=50)
+        self.__Listbox1 = Listbox(self.__Frame4,height=300,width=50, selectmode=MULTIPLE)
         self.__Scrollbar1 = Scrollbar(self.__Frame4)
-        self.__Scrollbar1.pack(side=RIGHT, fill=Y)
-        self.__Listbox1.pack(side=LEFT,expand=1,fill=BOTH)
+        self.__Scrollbar1.pack(side=RIGHT, fill=Y, anchor='e')
+        self.__Listbox1.pack(side=LEFT,expand=1,fill=BOTH, anchor='w')
         self.__Scrollbar1.config(command=self.__Listbox1.yview)
         self.__Listbox1.config(yscrollcommand=self.__Scrollbar1.set)
         self.__Frame3 = Frame(self)
@@ -54,11 +60,15 @@ class StyloGUI(Frame):
         menubar = Menu(Master)
         filemenu = Menu(menubar, tearoff=0)
         filemenu.add_command(label="Add A File To The Corpus", command=self.openFile)
+        filemenu.add_command(label="Add A Folder of Files to the Corpus", command=self.openFolder)
+        filemenu.add_command(label="Remove Selected Files From the Corpus", command=self.removeFiles)
         filemenu.add_command(label="Select Corpus", command=self.openCorpora)
-        filemenu.add_command(label="Quit",command=self.closeStylo)
+        #filemenu.add_command(label="Save Corpus", command=self.saveCorpus)
+        filemenu.add_command(label="Quit",command=self.destroy)
         toolsmenu = Menu(menubar, tearoff=0)
         toolsmenu.add_command(label="Manage Feature Sets", command=self.openFeatureSets)
         toolsmenu.add_command(label="Manage Plugins", command=self.openPlugins)
+        toolsmenu.add_command(label="Create A New Corpus", command=self.newCorpus)
         helpmenu = Menu(menubar, tearoff=0)
         helpmenu.add_command(label="Help", command=self.openHelp)
         helpmenu.add_command(label="About",command=self.openAbout)
@@ -67,6 +77,12 @@ class StyloGUI(Frame):
         menubar.add_cascade(label="Help", menu=helpmenu)
 		
         Master.config(menu=menubar)
+        
+        if os.path.exists('./guisettings.sgo'):
+            settingsFile = open('./guisettings.sgo','r')
+            self.userSettings = pickle.load(settingsFile)
+            self.corpusPath = self.userSettings['lastCorpus']
+            self.updateCorpus()
     #
     #Start of event handler methods
     #
@@ -74,6 +90,19 @@ class StyloGUI(Frame):
     #
     #Start of non-Rapyd user code
     #
+    def openFolder(self):
+        if self.corpusPath == "":
+            about = Toplevel()
+            about.__Label1 = Label(about,anchor='nw',justify='left', padx=15,pady=15 ,text='A corpus must be selected before it can have files added to it!')
+            about.__Label1.pack(anchor='nw',side='top')
+            about.__OkayButton1 = Button(about, anchor='s',justify='center', text='Okay', command=about.destroy)
+            about.__OkayButton1.pack(anchor='s',side='bottom')
+            return
+        folderLoc = tkFileDialog.askdirectory(parent=self,initialdir=self.corpusPath,title='Please select the Folder containing the files')
+        for work in os.listdir(folderLoc):
+            self.filesToAdd.append(folderLoc+"/"+work)
+        self.openAddDialog()
+    
     def openFile(self):
         if self.corpusPath == "":
             about = Toplevel()
@@ -82,12 +111,18 @@ class StyloGUI(Frame):
             about.__OkayButton1 = Button(about, anchor='s',justify='center', text='Okay', command=about.destroy)
             about.__OkayButton1.pack(anchor='s',side='bottom')
             return
-        self.newFileName = tkFileDialog.askopenfilename(title="Select A File to Add to the Corpus")
-        if(len(self.newFileName) <= 0):
+        newFileName = tkFileDialog.askopenfilename(title="Select A File to Add to the Corpus")
+        if(len(newFileName) <= 0):
             return
+        self.filesToAdd.append(newFileName)
+        self.openAddDialog()
+        
+    def openAddDialog(self):
         self.authorSelect = Toplevel()
         self.authorSelect.__Label1 = Label(self.authorSelect,anchor='nw',justify='left', padx=15,pady=15 ,text='Select an author, or add a new one!')
         self.authorSelect.__Label1.pack(anchor='nw',side='top')
+        self.authorSelect.__Label2 = Label(self.authorSelect,anchor='nw',justify='left', padx=15,pady=15 ,text='Document: ' + self.filesToAdd[0].split('/')[-1])
+        self.authorSelect.__Label2.pack(anchor='nw',side='top')
         
         self.selection = StringVar()
         self.selection.set("Other")
@@ -104,6 +139,9 @@ class StyloGUI(Frame):
         self.authorSelect.__Button1 = Button(self.authorSelect, text="Okay", command=self.addFile)
         self.authorSelect.__Button1.pack()
         
+    def saveCorpus(self):
+        print "TODO"
+    
     def addFile(self):
         newAuthor = self.selection.get()
         if(self.selection.get() == "Other"):
@@ -111,32 +149,59 @@ class StyloGUI(Frame):
         self.authorSelect.destroy()
         if self.authors.count(newAuthor) == 0:
             os.mkdir(self.corpusPath+"/"+newAuthor)
-        shutil.copy(self.newFileName,self.corpusPath+"/"+newAuthor+"/"+self.newFileName.split("/")[-1])
+        shutil.copy(self.filesToAdd[0],self.corpusPath+"/"+newAuthor+"/"+self.filesToAdd[0].split("/")[-1])
+        self.addedFiles.append(self.corpusPath+"/"+newAuthor+"/"+self.filesToAdd[0].split("/")[-1])
+        if len(self.filesToAdd) > 1:
+            self.filesToAdd = self.filesToAdd[1:]
+            self.openAddDialog()
+        else:
+            self.filesToAdd = []
         self.updateCorpus()
-    
-    def closeStylo(self):
-        print("I should totally do some cleanup before exiting. LOL!")
+        
+    def removeFiles(self):
+        if self.hiddenDeleteDir=="":
+            self.hiddenDeleteDir = tempfile.mkdtemp()
+        for file in self.__Listbox1.curselection():
+            fileIndex = int(file)
+            author = 0
+            for authorIndex in range(len(self.authorIndexes) - 1):
+                if fileIndex > self.authorIndexes[authorIndex] and fileIndex < self.authorIndexes[authorIndex + 1]:
+                    author = authorIndex
+                    break
+            path = self.corpusPath+"/" + self.authors[author] + "/" + self.__Listbox1.get(file).lstrip()
+            os.remove(path)
+        self.updateCorpus()
+        
+    def destroy(self):
+        outputfile = open('./guisettings.sgo','w')
+        pickle.dump(self.userSettings,outputfile)
         self.quit()
 		
     def openHelp(self):
-        print("NO HELP IS COMING")
+        print "TODO"
 		
     def openAbout(self):
         about = Toplevel()
         about.__Label1 = Label(about,anchor='nw',justify='left', padx=15,pady=15 ,text='The Stylo Team is:\nKyle Musal\nMatthew Tornetta\nAndrew Orner\nAaron Chapin\n\nAdvised By:\nRachel Greenstadt\nJeff Salvage\n\nVersion 0.1\nApril 6 2011')
         about.__Label1.pack(anchor='nw',side='top')
 
+    def newCorpus(self):
+        print "TODO"
+        
     def openCorpora(self):
         newCorpusName = tkFileDialog.askdirectory(parent=self,initialdir="../corpora/",title='Please select the Corpus Directory')
         if(len(newCorpusName) <= 0): #No corpus selected
             return
         self.corpusPath = newCorpusName
+        self.userSettings['lastCorpus'] = self.corpusPath
         self.updateCorpus()
         
     def updateCorpus(self):
         self.__Listbox1.delete(0,END)
         self.authors = []
+        self.authorIndexes = []
         for author in os.listdir(self.corpusPath):
+            self.authorIndexes.append(self.__Listbox1.size())
             self.__Listbox1.insert(END,author)
             self.authors.append(author)
             for work in os.listdir(self.corpusPath+"/"+author):
@@ -153,7 +218,7 @@ class StyloGUI(Frame):
         documentToAnalyze = tkFileDialog.askopenfilename(title='Select A File to Analyze')
         if len(documentToAnalyze) <= 0:
             return
-        analyzeProcess = subprocess.Popen(['python','../stylo.py', '-c', self.corpusPath, documentToAnalyze], stdout=subprocess.PIPE)
+        analyzeProcess = subprocess.Popen(['python','../stylo.py', '-c', self.corpusPath.split("/")[-1], documentToAnalyze], stdout=subprocess.PIPE)
         while(analyzeProcess.returncode == None):
             analyzeProcess.poll()
             self.__Text1.config(state=NORMAL)
@@ -171,7 +236,7 @@ class StyloGUI(Frame):
             about.__OkayButton1 = Button(about, anchor='s',justify='center', text='Okay', command=about.destroy)
             about.__OkayButton1.pack(anchor='s',side='bottom')
             return
-        trainProcess = subprocess.Popen(['python','../stylo.py', '-c', self.corpusPath, '-t'], stdout=subprocess.PIPE)
+        trainProcess = subprocess.Popen(['python','../stylo.py', '-c', self.corpusPath.split("/")[-1], '-t'], stdout=subprocess.PIPE)
         while(trainProcess.returncode == None):
             trainProcess.poll()
             self.__Text1.config(state=NORMAL)
@@ -187,10 +252,10 @@ class StyloGUI(Frame):
             self.__Text1.config(state=DISABLED)
 		
     def openFeatureSets(self):
-        print("Here are some sets...of features.")
+        print "TODO"
 		
     def openPlugins(self):
-        print("<plug-in joke goes here>")
+        print "TODO"
         
 
 try:
