@@ -19,6 +19,13 @@ import sys
 from PlugInInterface import *
 
 class PluginManager(object):
+    """Loads, organizes, and contacts plugins when events occur.
+    
+    _plug_ins -- List of plugins loaded
+    _events -- Dictionary of events where value is a list of plugins subscribed
+    
+    """
+    
     _plug_ins = {}
     _events = {
         "StyloStart" : [],
