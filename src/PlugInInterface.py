@@ -14,10 +14,10 @@
 #    along with Stylo.  If not, see <http://www.gnu.org/licenses/>.
 
 class PlugIn(object):
-    def register(self, hooks):
+    def register(self, events):
         raise NotImplementedError()
 
-    def unregister(self, hooks):
+    def unregister(self, events):
         raise NotImplementedError()
 
 class StyloStart(object):
@@ -81,7 +81,7 @@ class RunState(object):
     # The current feature we're extracting
     current_feature = None
 
-class Hooks(object):
+class Events(object):
     STYLOSTART = "StyloStart"
     STYLOSTOP = "StyloStop"
     EXTRACTSTART = "ExtractStart"

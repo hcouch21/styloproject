@@ -17,17 +17,17 @@ from plugins.FeatureExtractor.FeatureFactory import *
 from PlugInInterface import *
 
 class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
-    def register(self, hooks):
+    def register(self, events):
         """Set up callbacks for events we want to know about"""
 
-        hooks[Hooks.EXTRACTSTART].append(self)
-        hooks[Hooks.LISTFEATURES].append(self)
+        events[Events.EXTRACTSTART].append(self)
+        events[Events.LISTFEATURES].append(self)
 
-    def unregister(self, hooks):
+    def unregister(self, events):
         """Remove us from the list of callbacks"""
         
-        hooks[Hooks.EXTRACTSTART].remove(self)
-        hooks[Hooks.LISTFEATURES].remove(self)
+        events[Events.EXTRACTSTART].remove(self)
+        events[Events.LISTFEATURES].remove(self)
     
     def run_extract_start_action(self, state, manager):
         """Called when Stylo is in the extraction stage
@@ -41,7 +41,7 @@ class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
         if state.features_to_extract is None:
             state.features_to_extract = []
             
-            manager.fire_event(Hooks.LISTFEATURES,  state)
+            manager.fire_event(Events.LISTFEATURES,  state)
             for feature in state.available_features:
                 state.features_to_extract.append(feature._short_name)
 
@@ -52,7 +52,7 @@ class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
             sample.feature_results = {}
             
             for feature_name in state.features_to_extract:
-                manager.fire_event(Hooks.FEATURESTART, state)
+                manager.fire_event(Events.FEATURESTART, state)
 
                 state.current_feature = feature_name
                 feature = FeatureFactory.get_feature(feature_name)
@@ -61,7 +61,7 @@ class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
                     sample.feature_results[extracted_feature.name] = \
                                                              extracted_feature
 
-                manager.fire_event(Hooks.FEATURESTOP, state)
+                manager.fire_event(Events.FEATURESTOP, state)
 
             state.extracted.append(sample)
 

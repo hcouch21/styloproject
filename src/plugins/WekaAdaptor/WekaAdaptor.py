@@ -56,17 +56,17 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
         if config.has_option("Weka",  "relevance_algorithm"):
             self._relevance_algorithm = config.get("Weka",  "relevance_algorithm")
     
-    def register(self, hooks):
+    def register(self, events):
         """Set up callbacks for events we want to know about"""
 
-        hooks[Hooks.CLASSIFYSTART].append(self)
-        hooks[Hooks.TRAINSTART].append(self)
+        events[Events.CLASSIFYSTART].append(self)
+        events[Events.TRAINSTART].append(self)
 
-    def unregister(self, hooks):
+    def unregister(self, events):
         """Remove us from the list of callbacks"""
         
-        hooks[Hooks.CLASSIFYSTART].remove(self)
-        hooks[Hooks.TRAINSTART].remove(self)
+        events[Events.CLASSIFYSTART].remove(self)
+        events[Events.TRAINSTART].remove(self)
 
     def run_classify_start_action(self, state, manager):
         """Called when Stylo is in the classifying stage
@@ -241,8 +241,8 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
         for author in state.corpus.authors :
             state.to_extract = author.samples
 
-            manager.fire_event(Hooks.EXTRACTSTART, state)
-            manager.fire_event(Hooks.EXTRACTSTOP, state)
+            manager.fire_event(Events.EXTRACTSTART, state)
+            manager.fire_event(Events.EXTRACTSTOP, state)
 
             # Run through the extracted features and keep track of all
             # feature names used

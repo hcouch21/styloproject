@@ -4,23 +4,23 @@ from progressbar import *
 class ConsoleNotifier(PlugIn, ExtractStart,  ExtractStop, FeatureStart, TrainStart,  TrainStop):
     _progress_bar = None
     
-    def register(self, hooks):
+    def register(self, events):
         """Set up callbacks for events we want to know about"""
         
-        hooks[Hooks.EXTRACTSTART].append(self)
-        hooks[Hooks.EXTRACTSTOP].append(self)
-        hooks[Hooks.FEATURESTART].append(self)
-        hooks[Hooks.TRAINSTART].append(self)
-        hooks[Hooks.TRAINSTOP].append(self)
+        events[Events.EXTRACTSTART].append(self)
+        events[Events.EXTRACTSTOP].append(self)
+        events[Events.FEATURESTART].append(self)
+        events[Events.TRAINSTART].append(self)
+        events[Events.TRAINSTOP].append(self)
 
-    def unregister(self, hooks):
+    def unregister(self, events):
         """Remove us from the list of callbacks"""
         
-        hooks[Hooks.EXTRACTSTART].remove(self)
-        hooks[Hooks.EXTRACTSTOP].remove(self)
-        hooks[Hooks.FEATURESTART].remove(self)
-        hooks[Hooks.TRAINSTART].remove(self)
-        hooks[Hooks.TRAINSTOP].remove(self)
+        events[Events.EXTRACTSTART].remove(self)
+        events[Events.EXTRACTSTOP].remove(self)
+        events[Events.FEATURESTART].remove(self)
+        events[Events.TRAINSTART].remove(self)
+        events[Events.TRAINSTOP].remove(self)
     
     def run_extract_start_action(self, state, manager):
         if state.training:
