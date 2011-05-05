@@ -36,9 +36,12 @@ except:
 
 class Corpus(object):
     """Stores data about a corpus
+    
     name -- Name of the corpus (folder name)
     authors -- List of Authors associated with corpus
     path -- Relative path to corpus folder
+    password -- Key used to encrypt/decrypt the corpus
+    uses_encryption -- Indicates if the corpus is to use encryption
 
     """
 
@@ -56,6 +59,8 @@ class Corpus(object):
         self.authors = []
     
     def file_count(self):
+        """Returns the number of files in the corpus."""
+        
         if not self._loaded:
             self.load()
         
@@ -66,12 +71,19 @@ class Corpus(object):
         return count
     
     def author_count(self):
+        """Returns the number of authors in the corpus."""
         if not self._loaded:
             self.load()
         
         return len(self.authors)
 
     def load(self, password=None):
+        """Loads the corpus from the directory structure.  If encrypted unencryption is done.
+        
+        password -- Key used during corpus encryption.
+        
+        """
+        
         if self._loaded:
             return
         
@@ -97,6 +109,8 @@ class Corpus(object):
         return "%s - %d authors" % (self.name, len(self.authors))
 
     def save(self):
+        """Saves the corpus.  If corpus was encrypted, it is re-encrypted."""
+        
         # Nothing to do if its not encrypted
         if not self.uses_encryption:
             return
@@ -105,6 +119,8 @@ class Corpus(object):
         self.encrypt(self.password)
     
     def compress(self):
+        """Compresses a corpus into a zip archive."""
+        
         print "Archiving..."
         
         basedir = self.path
@@ -124,6 +140,8 @@ class Corpus(object):
             print >> sys.stderr, "Failed to remove corpus directory"
     
     def decompress(self):
+        """Decompresses a zip archive into a corpus."""
+        
         print "Un-archiving..."
         
         with zipfile.ZipFile("corpora/%s.zip" % self.name , "r") as z:
@@ -132,18 +150,32 @@ class Corpus(object):
         os.remove("corpora/" + self.name + ".zip")
 
     def encrypt(self, password):
+        """Encrypts the corpus using a specified key.
+        
+        password -- Key to be used during encryption
+        
+        """
+        
         self.uses_encryption = True
         print "Encrypting..."
         encrypt_file(password,  "corpora/" + self.name + ".zip", "corpora/" + self.name + ".sec")
         os.remove("corpora/" + self.name + ".zip")
 
     def decrypt(self, password):
+        """Decrypts the corpus using the specified key.
+        
+        password -- Key used to decrypt the corpus
+        
+        """
+        
         print "Decrypting..."
         decrypt_file(password, "corpora/" + self.name + ".sec", "corpora/" + self.name + ".zip")
         os.remove("corpora/" + self.name + ".sec")
 
     @staticmethod
     def get_all_corpora():
+        """Lists all corpora in the Stylo corpora directory."""
+        
         avail_corpora = []
         corpora_names = os.listdir("./corpora/")
 
@@ -159,6 +191,7 @@ class Corpus(object):
 
 class Author(object):
     """Stores data related to an author in a corpus
+    
     name -- Name of the author
     path -- Relative path to author folder
     samples -- List of Samples associated with author
@@ -182,12 +215,13 @@ class Author(object):
 
 class Sample(object):
     """Stores data and state of a sample document
+    
     name -- The name of the sample (filename)
     path -- Relative path to the file (including filename)
     feature_results -- List of FeatureResults for extracted features
-
     plain_text -- Raw characters that make up the sample
     nltk_text -- ntlk.Text object which is a list of tokens
+    
     """
 
     name = None
@@ -218,6 +252,7 @@ class Sample(object):
 
 class FeatureResult(object):
     """Stores the value after a linguistic feature is extracted
+    
     name -- The name of the feature this result belongs to
     value -- The actual extracted value
     weight -- The weight of the feature in authorship prediction
