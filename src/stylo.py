@@ -102,7 +102,7 @@ class StyloCLI(object):
 
         # List features
         if options.list_features:
-            self.plugin_manager.fire_event(Hooks.LISTFEATURES, state)
+            self.plugin_manager.fire_event(Events.LISTFEATURES, state)
             
             for feature in state.available_features:
                 print feature
@@ -111,8 +111,8 @@ class StyloCLI(object):
         # Train
         elif options.train:
             state.training = True
-            self.plugin_manager.fire_event(Hooks.TRAINSTART, state)
-            self.plugin_manager.fire_event(Hooks.TRAINSTOP, state)
+            self.plugin_manager.fire_event(Events.TRAINSTART, state)
+            self.plugin_manager.fire_event(Events.TRAINSTOP, state)
         # Encrypt
         elif options.encrypt:
             if not state.options.key:
@@ -132,10 +132,10 @@ class StyloCLI(object):
             sys.exit(0)
         # Classify
         else:
-            self.plugin_manager.fire_event(Hooks.EXTRACTSTART, state)
-            self.plugin_manager.fire_event(Hooks.EXTRACTSTOP, state)
-            self.plugin_manager.fire_event(Hooks.CLASSIFYSTART, state)
-            self.plugin_manager.fire_event(Hooks.CLASSIFYSTOP, state)
+            self.plugin_manager.fire_event(Events.EXTRACTSTART, state)
+            self.plugin_manager.fire_event(Events.EXTRACTSTOP, state)
+            self.plugin_manager.fire_event(Events.CLASSIFYSTART, state)
+            self.plugin_manager.fire_event(Events.CLASSIFYSTOP, state)
 
             # Output human readable
             if not options.pickle:

@@ -20,7 +20,7 @@ from PlugInInterface import *
 
 class PluginManager(object):
     _plug_ins = {}
-    _hooks = {
+    _events = {
         "StyloStart" : [],
         "StyloStop" : [],
 
@@ -58,7 +58,7 @@ class PluginManager(object):
         try:
             mod = imp.load_source(name, "plugins/%s/%s.py" % (name, name))
             pi = getattr(mod, name)()
-            pi.register(self._hooks)
+            pi.register(self._events)
             self._plug_ins[name] = pi
         # Couldn't load the plugin, probably because of import error
         except Exception as e:
@@ -93,7 +93,7 @@ class PluginManager(object):
             pi = self._plug_ins[plugin]
         
         if pi is not None:
-            pi.unregister(self._hooks)
+            pi.unregister(self._events)
             del self._plug_ins[plugin]
             del pi
 
@@ -104,18 +104,18 @@ class PluginManager(object):
         state -- RunState object about the current state of Stylo
 
         """
-        for plugin in self._hooks[event]:
-            event_action = getattr(plugin, Hooks.functions[event])
+        for plugin in self._events[event]:
+            event_action = getattr(plugin, Events.functions[event])
             event_action(state, self)
 
     def __str__(self):
         rVal = ""
 
-        for k in self._hooks.keys():
+        for k in self._events.keys():
             rVal += "%s:\n" % k
 
             count = 0
-            for p in self._hooks[k]:
+            for p in self._events[k]:
                 rVal += "%d) %s\n" % (count, p.__class__.__name__)
 
             rVal += "\n"
