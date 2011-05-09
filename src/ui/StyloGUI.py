@@ -19,6 +19,7 @@ class StyloGUI(Frame):
     addedFiles = []
     features = []
     featuresSelected = []
+    plugins = []
 
     def __init__(self,Master=None,**kw):
         #
@@ -47,8 +48,7 @@ class StyloGUI(Frame):
         self.__Button1.pack(side='top')
         self.__Button2 = Button(self.__Frame3,text='Analyze',width=20, command=self.analyzeDocument)
         self.__Button2.pack(side='top')
-        self.__Label1 = Label(self.__Frame3,anchor='w',justify='left'
-            ,text='Progress')
+        self.__Label1 = Label(self.__Frame3,anchor='w',justify='left',text='Progress')
         self.__Label1.pack(anchor='sw',side='top')
         self.__Text1 = Text(self.__Frame3,height=12,state=DISABLED)
         self.__Scrollbar2 = Scrollbar(self.__Frame3)
@@ -81,6 +81,7 @@ class StyloGUI(Frame):
 		
         Master.config(menu=menubar)
         
+        #Find which features are currently supported by stylo
         self.features = []
         analyzeProcess = subprocess.Popen(['python','../stylo.py', '-l'], stdout=subprocess.PIPE)
         while(analyzeProcess.returncode == None):
@@ -91,12 +92,20 @@ class StyloGUI(Frame):
                     self.features.append(feature.strip('\r'))
         #print(self.features) #Uncomment to see features
         
+        #Read in the GUI settings, such as the last corpus
         if os.path.exists('./guisettings.sgo'):
             settingsFile = open('./guisettings.sgo','r')
             self.userSettings = pickle.load(settingsFile)
             if self.userSettings.has_key('lastCorpus'):
                 self.corpusPath = self.userSettings['lastCorpus']
             self.updateCorpus()
+        
+        #Get the active plugins
+        self.plugins = []
+        if os.path.exists('../enabled_plugins'):
+            pluginsFile = open('../enabled_plugins','r')
+            for line in pluginsFile:
+                self.plugins.append(line.strip())
     #
     #Start of event handler methods
     #
@@ -345,8 +354,29 @@ class StyloGUI(Frame):
             return True
 	
     def openPlugins(self):
-        print "TODO"
+        self.pluginsWindow = Toplevel()
+        self.pluginsWindow.__Frame1 = Frame(self.pluginsWindow)
+        self.pluginsWindow.__Frame1.pack(side='top')
+        self.pluginsWindow.__Label1 = Label(self.pluginsWindow.__Frame1,anchor='nw',justify='left', padx=15,pady=15 ,text='Currently active plugins:')
+        self.pluginsWindow.__Label1.pack(anchor='nw',side='top')
+        self.pluginsWindow.__Frame2 = Frame(self.pluginsWindow)
+        self.pluginsWindow.__Frame2.pack()
+        self.pluginsWindow.__Frame2.__Listbox1 = Listbox(self.pluginsWindow.__Frame2,height=10,width=40, selectmode=MULTIPLE)
+        self.pluginsWindow.__Frame2.__Scrollbar1 = Scrollbar(self.pluginsWindow.__Frame2)
+        self.pluginsWindow.__Frame2.__Scrollbar1.pack(side=RIGHT, fill=Y, anchor='e')
+        self.pluginsWindow.__Frame2.__Listbox1.pack(side=LEFT, anchor='w')
+        self.pluginsWindow.__Frame2.__Scrollbar1.config(command=self.pluginsWindow.__Frame2.__Listbox1.yview)
+        self.pluginsWindow.__Frame2.__Listbox1.config(yscrollcommand=self.pluginsWindow.__Frame2.__Scrollbar1.set)
+        self.pluginsWindow.__Frame3 = Frame(self.pluginsWindow)
+        self.pluginsWindow.__Frame3.pack(side='bottom',padx=15,pady=15)
+        self.pluginsWindow.__Frame3.__Button1 = Button(self.pluginsWindow.__Frame3, text="Save Settings", command=self.setPlugins)
+        self.pluginsWindow.__Frame3.__Button1.pack(anchor='sw')
         
+        for plugin in self.plugins:
+            self.pluginsWindow.__Frame2.__Listbox1.insert(END,plugin)
+            
+    def setPlugins(self):
+        self.pluginsWindow.destroy()
 
 try:
     #--------------------------------------------------------------------------#
