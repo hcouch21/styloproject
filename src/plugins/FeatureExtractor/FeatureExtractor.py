@@ -17,6 +17,12 @@ from plugins.FeatureExtractor.FeatureFactory import *
 from PlugInInterface import *
 
 class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
+    dependencies = None
+    conflicts = None
+    needs_vanilla_data = False
+    modifies_data = True
+    category = Categories.FEATUREEXTRACTION
+    
     def register(self, events):
         """Set up callbacks for events we want to know about"""
 

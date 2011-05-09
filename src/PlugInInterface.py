@@ -107,3 +107,9 @@ class Events(object):
         TRAINSTOP : "run_train_stop_action",
         LISTFEATURES : "run_list_features_action",
     }
+
+class Categories(object):
+    MACHINELEARNING  = "MachineLearning"
+    FEATUREEXTRACTION = "FeatureExtraction"
+    OUTPUT = "Output"
+    VISUALIZATION = "Visualization"
