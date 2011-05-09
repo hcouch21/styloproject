@@ -291,7 +291,7 @@ class StyloGUI(Frame):
         if len(self.featuresSelected) > 0:
             features = "-f"
             for feature in self.featuresSelected:
-                features += " " + str(feature) + ";"
+                features += " " + str(feature) + ","
         analyzeProcess = subprocess.Popen(['python','../stylo.py', '-c', self.corpusPath.split("/")[-1], documentToAnalyze,features], stdout=subprocess.PIPE)
         while(analyzeProcess.returncode == None):
             analyzeProcess.poll()
