@@ -26,6 +26,12 @@ from Domain import FeatureResult
 from PlugInInterface import *
 
 class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
+    dependencies = None
+    conflicts = None
+    needs_vanilla_data = False
+    modifies_data = False
+    category = Categories.MACHINELEARNING
+    
     _classify_algorithm = "weka.classifiers.bayes.NaiveBayes"
     _relevance_algorithm = "weka.attributeSelection.ReliefFAttributeEval"
 

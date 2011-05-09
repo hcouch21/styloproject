@@ -65,12 +65,18 @@ class PluginManager(object):
         try:
             mod = imp.load_source(name, "plugins/%s/%s.py" % (name, name))
             pi = getattr(mod, name)()
-            pi.register(self._events)
-            self._plug_ins[name] = pi
         # Couldn't load the plugin, probably because of import error
         except Exception as e:
             print >> sys.stderr, "Failed to load plugin %s." % name
             print >> sys.stderr, e
+        
+        conflicts_with = self._does_conflict(pi.conflicts)
+        if(conflicts_with):
+            print >> sys.stderr, "Failed to load plugin %s due to conflict with %s." % (name, conflicts_with)
+            return
+        
+        pi.register(self._events)
+        self._plug_ins[name] = pi
 
     def load_plugins(self):
         try:
@@ -114,6 +120,16 @@ class PluginManager(object):
         for plugin in self._events[event]:
             event_action = getattr(plugin, Events.functions[event])
             event_action(state, self)
+    
+    def _does_conflict(self, conflicts):
+        if not conflicts:
+            return None
+        
+        for name in self._plug_ins.keys():
+            if name in conflicts:
+                return name
+        
+        return None
 
     def __str__(self):
         rVal = ""

@@ -2,6 +2,12 @@ from PlugInInterface import *
 from progressbar import *
 
 class ConsoleNotifier(PlugIn, ExtractStart,  ExtractStop, FeatureStart, TrainStart,  TrainStop):
+    dependencies = None
+    conflicts = None
+    needs_vanilla_data = False
+    modifies_data = False
+    category = Categories.OUTPUT
+    
     _progress_bar = None
     
     def register(self, events):
