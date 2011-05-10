@@ -17,6 +17,9 @@ from Domain import FeatureResult
 from LinguisticFeature import *
 
 class AvgWordsPerParagraph(LinguisticFeature):
+    """ Feature that calculates the average number of words per paragraph
+        in the sample
+    """
     _short_name = "AvgWordsPerParagraph"
     _long_name = "Average Number of Words per Paragraph"
     _description = "Average number of words per paragraph in the sample."

@@ -19,6 +19,9 @@ from Domain import FeatureResult
 from LinguisticFeature import *
 
 class PctWordGroups(LinguisticFeature):
+    """ Feature that calculates the percentage of words that belong
+        in each specified word group
+    """
     _short_name = "PctWordGroups"
     _long_name = "Percent Word Groups"
     _description = "Percentage of words per word group."

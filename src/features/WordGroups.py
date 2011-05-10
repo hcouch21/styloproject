@@ -19,9 +19,10 @@ from Domain import FeatureResult
 from LinguisticFeature import *
 
 class WordGroups(LinguisticFeature):
+    """ Feature that counts the number of words in each specified word group""" 
     _short_name = "WordGroups"
     _long_name = "Word Groups"
-    _description = "Percentage of words per word group."
+    _description = "Number of words per word group."
     
     _group_words = {}
     

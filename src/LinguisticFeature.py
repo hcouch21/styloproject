@@ -17,6 +17,9 @@ import nltk
 import os.path
 
 def init_nltk(clazz):
+    """ Initialize path to NLTK so that resource files do not
+        need to be loaded directly.
+    """
     directory = os.path.dirname(__file__)
     nltk.data.path.insert(0, directory + "/resources")
 
@@ -24,6 +27,7 @@ def init_nltk(clazz):
 
 @init_nltk
 class LinguisticFeature(object):
+    """ Represents an individual linguistic feature."""
     _short_name = ""
     _long_name = ""
     _description = ""
@@ -46,9 +50,7 @@ class LinguisticFeature(object):
         return self._plain_text
 
     def _get_words(self, sample) :
-        """ Single place to get all words in the sample (not including punct.)
-
-        """
+        """ Single place to get all words in the sample (not including punct.)"""
         return [x for x in sample.nltk_text if x.isalnum() or len(x) > 1]
     
     def __str__(self):

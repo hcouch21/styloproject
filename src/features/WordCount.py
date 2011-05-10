@@ -17,6 +17,7 @@ from Domain import FeatureResult
 from LinguisticFeature import *
 
 class WordCount(LinguisticFeature):
+    """ Feature that counts the number of words in the sample"""
     _short_name = "WordCount"
     _long_name = "Word Count"
     _description = "Number of words in the sample."

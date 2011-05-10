@@ -19,6 +19,9 @@ from LinguisticFeature import *
 import nltk
 
 class AvgSentencesPerParagraph(LinguisticFeature):
+    """ Feature that calculates the average number of sentences per
+        paragraph in the sample
+    """
     _short_name = "AvgSentencesPerParagraph"
     _long_name = "Average Number of Sentences per Paragraph"
     _description = "Average number of sentences per paragraph in the sample."

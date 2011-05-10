@@ -19,6 +19,7 @@ import os
 from LinguisticFeature import *
 
 def init_features(clazz):
+    """Initialize the list of installed features"""
     installed_features = os.listdir("features");
 
     for feature in installed_features:
@@ -33,6 +34,9 @@ class FeatureFactory:
 
     @classmethod
     def get_feature(self, name):
+        """Get an instance of a specified feature
+           name -- Name of feature to use
+        """
         if name not in self._registered_features:
             self.load_feature(name)
 
@@ -40,6 +44,9 @@ class FeatureFactory:
 
     @classmethod
     def load_feature(self, name):
+        """Load an individual feature from the file system
+           name -- Name of feature to load
+        """
         try:
             mod = imp.load_source(name, "features/%s.py" % name);
 
@@ -54,4 +61,5 @@ class FeatureFactory:
         
     @classmethod
     def get_installed_features(self):
+        """List all installed features"""
         return self._registered_features.keys()

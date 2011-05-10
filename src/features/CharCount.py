@@ -17,6 +17,7 @@ from Domain import FeatureResult
 from LinguisticFeature import *
 
 class CharCount(LinguisticFeature):
+    """ Feature that calculates the number of characters in the sample"""
     _short_name = "CharCount"
     _long_name = "Character Count"
     _description = "Number of characters in the sample."

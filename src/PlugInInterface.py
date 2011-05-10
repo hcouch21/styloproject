@@ -65,6 +65,7 @@ class ListFeatures(object):
         raise NotImplementedError()
 
 class RunState(object):
+    """Representation of the current state of Stylo when an event is fired"""
     training = None
 
     corpus = None
@@ -82,6 +83,7 @@ class RunState(object):
     current_feature = None
 
 class Events(object):
+    """Specifies the events that a plugin can listen to"""
     STYLOSTART = "StyloStart"
     STYLOSTOP = "StyloStop"
     EXTRACTSTART = "ExtractStart"
@@ -109,6 +111,7 @@ class Events(object):
     }
 
 class Categories(object):
+    """Specifies plugin categories"""
     MACHINELEARNING  = "MachineLearning"
     FEATUREEXTRACTION = "FeatureExtraction"
     OUTPUT = "Output"

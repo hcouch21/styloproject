@@ -17,6 +17,9 @@ from Domain import FeatureResult
 from LinguisticFeature import *
 
 class PctPunctuation(LinguisticFeature):
+    """ Feature that calculates the percentage of each type of punctuation
+        in the sample
+    """
     _short_name = "PctPunctuation"
     _long_name = "Punctuation Percentage"
     _description = "Percentage of each type of punctuation in the sample."
@@ -34,6 +37,8 @@ class PctPunctuation(LinguisticFeature):
 
         sample_length = len(sample.plain_text)
 
+        # Loop through each specified punctuation type
+        # and calculate its frequency
         for key, value in self._punctuation.items():
             val = round((float(len([x for x in sample.nltk_text
                                     if x == value])) / sample_length) * 100, 2)

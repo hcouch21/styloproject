@@ -17,6 +17,9 @@ from Domain import FeatureResult
 from LinguisticFeature import *
 
 class LargeWordCount(LinguisticFeature):
+    """ Feature that calculates the number of large words in the sample.
+        Large words are those that have at least 10 characters.
+    """
     _short_name = "LargeWordCount"
     _long_name = "Large Word Count"
     _description = "Number of words in the sample with at least 10 characters."

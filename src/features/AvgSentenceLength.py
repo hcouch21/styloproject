@@ -18,6 +18,7 @@ from LinguisticFeature import *
 import nltk
 
 class AvgSentenceLength(LinguisticFeature):
+    """ Feature that calculates the average sentence length of the sample"""
     _short_name = "AvgSentenceLength"
     _long_name = "Average Sentence Length"
     _description = "Average length of sentences in the sample."

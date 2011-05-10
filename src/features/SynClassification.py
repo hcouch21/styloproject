@@ -20,6 +20,10 @@ from Domain import FeatureResult
 from LinguisticFeature import *
 
 class SynClassification(LinguisticFeature):
+    """ Feature that calculates the product of the number of synonyms of
+        each word and the minimum nuber of times those synonyms are used
+        in the sample
+    """
     _short_name = "SynClassification"
     _long_name = "Synonym Classification"
     _description = "Classification of synonym use"
