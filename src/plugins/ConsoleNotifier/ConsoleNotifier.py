@@ -2,6 +2,7 @@ from PlugInInterface import *
 from progressbar import *
 
 class ConsoleNotifier(PlugIn, ExtractStart,  ExtractStop, FeatureStart, TrainStart,  TrainStop):
+    """ Notifier plugin that prints status messages to STDOUT"""
     dependencies = None
     conflicts = None
     needs_vanilla_data = False
@@ -29,6 +30,7 @@ class ConsoleNotifier(PlugIn, ExtractStart,  ExtractStop, FeatureStart, TrainSta
         events[Events.TRAINSTOP].remove(self)
     
     def run_extract_start_action(self, state, manager):
+        """Called when feature extraction begins"""
         if state.training:
             nextval = self._progress_bar.currval + 1
             self._progress_bar.update(nextval)
@@ -41,11 +43,13 @@ class ConsoleNotifier(PlugIn, ExtractStart,  ExtractStop, FeatureStart, TrainSta
         #        self._progress_bar = ProgressBar(widgets=[Percentage(), Bar()], maxval=999).start()
     
     def run_extract_stop_action(self,  state,  manager):
+        """Called when feature extraction finishes"""
         if not state.training:
             self._progress_bar.finish()
             sys.stdout.write("\n")
     
     def run_feature_start_action(self, state, manager):
+        """Called when an individual feature begins extraction"""
         if not state.training:
             #if self._progress_bar.maxval == 999:
             #    self._progress_bar.maxval = len(state.features_to_extract)
@@ -57,9 +61,11 @@ class ConsoleNotifier(PlugIn, ExtractStart,  ExtractStop, FeatureStart, TrainSta
             self._progress_bar.update(nextval)
     
     def run_train_start_action(self, state, manager):
+        """Called when training begins"""
         print "Training..."
         self._progress_bar = ProgressBar(widgets=[Percentage(), Bar()], maxval=state.corpus.author_count()).start()
     
     def run_train_stop_action(self, state, manager):
+        """Called when training ends"""
         self._progress_bar.finish()
         sys.stdout.write("\n")

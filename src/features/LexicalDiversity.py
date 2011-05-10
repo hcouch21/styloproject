@@ -30,6 +30,7 @@ class LexicalDiversity(LinguisticFeature):
     def extract(self, sample):
         """ Extract the lexical diversity of the sample
             Defined as 1 - ( sum(n * (n-1)) / (N * (N*1)) )
+            Where n is an individual word and N is all words
         sample -- Sample to analyze
 
         """

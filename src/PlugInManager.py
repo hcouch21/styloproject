@@ -79,6 +79,7 @@ class PluginManager(object):
         self._plug_ins[name] = pi
 
     def load_plugins(self):
+        """Load all enabled plugins"""
         try:
             with open("enabled_plugins",  "r") as f:
                 for line in f:

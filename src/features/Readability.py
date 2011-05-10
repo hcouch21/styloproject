@@ -20,6 +20,10 @@ import nltk
 from nltk_contrib.readability import syllables_en
 
 class Readability(LinguisticFeature):
+    """ Feature that calculates the readability of the sample.
+        Uses both the Automated Readability Index (ARI)
+        and the Flesch Reading Ease (FRE)
+    """
     _short_name = "Readability"
     _long_name = "Readability"
     _description = "Various readability computations."
@@ -37,17 +41,21 @@ class Readability(LinguisticFeature):
         
         # Automated Readability Index (ARI)
         result = FeatureResult("AutomatedReadabilityIndex")
-        result.value = 4.71 * (self.char_count / self.word_count) + 0.5 * (self.word_count / self.sentence_count) - 21.43
+        result.value = 4.71 * (self.char_count / self.word_count) + 0.5 \
+                        * (self.word_count / self.sentence_count) - 21.43
         results.append(result)
         
         # Flesch Reading Ease (FRE)
         result = FeatureResult("FleschReadingEase")
-        result.value = 206.835 - (1.015 * (self.word_count / self.sentence_count)) - (84.6 * (self.syllable_count / self.word_count))
+        result.value = 206.835 - (1.015 * (self.word_count / 
+                                            self.sentence_count)) \
+                        - (84.6 * (self.syllable_count / self.word_count))
         results.append(result)
         
         return results
     
     def __analyze_text(self,  sample):
+        """ Calculates a few properties that are needed for analysis"""
         words = self._get_words(sample)
 
         self.word_count = len(words)

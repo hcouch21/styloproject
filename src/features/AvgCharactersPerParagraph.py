@@ -17,6 +17,9 @@ from Domain import FeatureResult
 from LinguisticFeature import *
 
 class AvgCharactersPerParagraph(LinguisticFeature):
+    """ Feature that calculates the average number of characters
+        per paragraph in the sample
+    """
     _short_name = "AvgCharactersPerParagraph"
     _long_name = "Average Number of Characters per Paragraph"
     _description = "Average number of characters per paragraph in the sample."
@@ -31,7 +34,6 @@ class AvgCharactersPerParagraph(LinguisticFeature):
         paragraphs = [x.strip() for x in sample.plain_text.splitlines()
                         if len(x.strip()) > 0]
 
-        
         result = FeatureResult(self._short_name)
         result.value = round(float(len(sample.plain_text)) / \
                              float(len(paragraphs)), 2)

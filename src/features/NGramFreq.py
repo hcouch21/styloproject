@@ -17,6 +17,9 @@ from Domain import FeatureResult
 from LinguisticFeature import *
 
 class NGramFreq(LinguisticFeature):
+    """ Feature that calculates the frequency of unigrams, bigrams, and
+        trigrams in the sample
+    """
     _short_name = "NGramFreq"
     _long_name = "N-Gram Frequency"
     _description = "Frequency of unigrams, bigrams, and trigrams in the sample"

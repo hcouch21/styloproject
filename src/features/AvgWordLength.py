@@ -17,6 +17,7 @@ from Domain import FeatureResult
 from LinguisticFeature import *
 
 class AvgWordLength(LinguisticFeature):
+    """ Feature that calculates the average length of words in the sample"""
     _short_name = "AvgWordLength"
     _long_name = "Average Word Length"
     _description = "Average length of words in the sample."
@@ -24,6 +25,7 @@ class AvgWordLength(LinguisticFeature):
     def extract(self, sample):
         result = FeatureResult(self._short_name)
         
+        # Create list of lengths of words in the sample
         word_lengths = []
         words = self._get_words(sample)
         for word in words : 

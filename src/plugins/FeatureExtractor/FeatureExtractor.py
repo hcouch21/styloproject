@@ -53,6 +53,7 @@ class FeatureExtractor(PlugIn, ExtractStart, ListFeatures):
 
         state.extracted = []
 
+        # Extract each specified feature
         while len(state.to_extract) != 0:
             sample = state.to_extract.pop(0)
             sample.feature_results = {}

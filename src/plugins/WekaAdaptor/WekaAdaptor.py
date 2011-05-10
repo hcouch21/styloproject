@@ -26,6 +26,7 @@ from Domain import FeatureResult
 from PlugInInterface import *
 
 class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
+    """Adapter for the WEKA machine learning tool"""
     dependencies = None
     conflicts = None
     needs_vanilla_data = False
@@ -118,7 +119,10 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
                 sys.exit(1)
        
         # Parse out weights
-        weka_results = Popen(["java", "-Dfile.encoding=utf-8",  self._relevance_algorithm, "-i", state.corpus.path + "stylo/training-weka.arff", "-c", "first"],  stdout=PIPE).communicate()[0]
+        weka_results = Popen(["java", "-Dfile.encoding=utf-8", 
+                            self._relevance_algorithm, "-i",
+                            state.corpus.path + "stylo/training-weka.arff",
+                            "-c", "first"],  stdout=PIPE).communicate()[0]
         weka_weights = {}
         start_weights = False
         for line in weka_results.split("\n"):
@@ -217,7 +221,11 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
             f.write("\n")
             f.write("@data\n%s" % data)
             
-        weka_results = Popen(["java", "-Xmx1g", "-Xms256m", "-Dfile.encoding=utf-8", self._classify_algorithm, "-t", state.corpus.path + "stylo/training-weka.arff", "-T", "classify_data.arff", "-c", "first", "-p", "0"],  stdout=PIPE).communicate()[0]
+        weka_results = Popen(["java", "-Xmx1g", "-Xms256m",
+                          "-Dfile.encoding=utf-8", self._classify_algorithm,
+                          "-t", state.corpus.path + "stylo/training-weka.arff",
+                          "-T", "classify_data.arff", "-c", "first", "-p",
+                          "0"],  stdout=PIPE).communicate()[0]
         os.remove("classify_data.arff")
 
         # Classify each sample

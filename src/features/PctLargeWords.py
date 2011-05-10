@@ -17,6 +17,9 @@ from Domain import FeatureResult
 from LinguisticFeature import *
 
 class PctLargeWords(LinguisticFeature):
+    """ Feature that calculates the percentage of large words in the sample.
+        Large words are those that have more than 10 characters.
+    """
     _short_name = "PctLargeWords"
     _long_name = "Percent Large Words"
     _description = "Percentage of words in the sample with " + \

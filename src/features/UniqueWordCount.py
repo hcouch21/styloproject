@@ -17,6 +17,7 @@ from Domain import FeatureResult
 from LinguisticFeature import *
 
 class UniqueWordCount(LinguisticFeature):
+    """ Feature that counts the number of unique words in the sample"""
     _short_name = "UniqueWordCount"
     _long_name = "Unique Word Count"
     _description = "Number of unique words in the sample."
@@ -25,13 +26,9 @@ class UniqueWordCount(LinguisticFeature):
         result = FeatureResult(self._short_name)
         words = {}
 
-        sample_words = self._get_words(sample)
-        for word in sample_words :
-            word = word.lower()
+        # Convert all words to lower case
+        sample_words = [x.lower() for x in self._get_words(sample)]
 
-            if word not in words :
-                words[word] = True
-
-        result.value = len(words.keys())
+        result.value = len(set(sample_words))
 
         return [result]
