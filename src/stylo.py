@@ -190,5 +190,14 @@ if __name__ == "__main__":
 
     (options, args) = parser.parse_args()
 
-    cli = StyloCLI()
-    cli.parse_arguments(args, options)
+    if not (options.train or options.input or options.list_features) :
+        print "One of (-t, -i, -l) is required to run Stylo.\n"
+
+        parser.print_help()
+    elif (options.train or options.input) and not options.corpus :
+        print "Please select a corpus to use.\n"
+
+        parser.print_help()
+    else :
+        cli = StyloCLI()
+        cli.parse_arguments(args, options)
