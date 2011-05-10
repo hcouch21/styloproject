@@ -20,6 +20,8 @@ class StyloGUI(Frame):
     features = []
     featuresSelected = []
     plugins = []
+    needsToBeTrained = True
+    pluginsWindow=None
 
     def __init__(self,Master=None,**kw):
         #
@@ -44,8 +46,8 @@ class StyloGUI(Frame):
         self.logoImage = PhotoImage(file="./stylologo_redblack.gif")
         self.__Canvas1.create_image(125,96,image=self.logoImage)
         self.__Canvas1.pack(side='top')
-        self.__Button1 = Button(self.__Frame3,text='Train',width=20, command=self.trainCorpora)
-        self.__Button1.pack(side='top')
+        #self.__Button1 = Button(self.__Frame3,text='Train',width=20, command=self.trainCorpora)
+        #self.__Button1.pack(side='top')
         self.__Button2 = Button(self.__Frame3,text='Analyze',width=20, command=self.analyzeDocument)
         self.__Button2.pack(side='top')
         self.__Label1 = Label(self.__Frame3,anchor='w',justify='left',text='Progress')
@@ -81,15 +83,10 @@ class StyloGUI(Frame):
 		
         Master.config(menu=menubar)
         
+        self.needsToBeTrained = True
+        
         #Find which features are currently supported by stylo
-        self.features = []
-        analyzeProcess = subprocess.Popen(['python','../stylo.py', '-l'], stdout=subprocess.PIPE)
-        while(analyzeProcess.returncode == None):
-            analyzeProcess.poll()
-            newFeature = analyzeProcess.communicate()[0].split('\n')
-            for feature in newFeature:
-                if len(feature.strip('\r')) > 0:
-                    self.features.append(feature.strip('\r'))
+        self.getFeatures()
         #print(self.features) #Uncomment to see features
         
         #Read in the GUI settings, such as the last corpus
@@ -113,6 +110,17 @@ class StyloGUI(Frame):
     #
     #Start of non-Rapyd user code
     #
+    
+    def getFeatures(self):
+        self.features = []
+        analyzeProcess = subprocess.Popen(['python','../stylo.py', '-l'], stdout=subprocess.PIPE)
+        while(analyzeProcess.returncode == None):
+            analyzeProcess.poll()
+            newFeature = analyzeProcess.communicate()[0].split('\n')
+            for feature in newFeature:
+                if len(feature.strip('\r')) > 0:
+                    self.features.append(feature.strip('\r'))
+    
     def openFolder(self):
         if self.corpusPath == "":
             about = Toplevel()
@@ -161,9 +169,6 @@ class StyloGUI(Frame):
         self.authorSelect.__Entry1.pack(anchor='w')
         self.authorSelect.__Button1 = Button(self.authorSelect, text="Okay", command=self.addFile)
         self.authorSelect.__Button1.pack()
-        
-    def saveCorpus(self):
-        print "TODO"
     
     def addFile(self):
         newAuthor = self.selection.get()
@@ -287,12 +292,19 @@ class StyloGUI(Frame):
         documentToAnalyze = tkFileDialog.askopenfilename(title='Select A File to Analyze')
         if len(documentToAnalyze) <= 0:
             return
-        features = ""
+        analysisArgs = ['python','../stylo.py', '-c', self.corpusPath.split("/")[-1]]
+        
         if len(self.featuresSelected) > 0:
             features = "-f"
             for feature in self.featuresSelected:
                 features += " " + str(feature) + ","
-        analyzeProcess = subprocess.Popen(['python','../stylo.py', '-c', self.corpusPath.split("/")[-1], documentToAnalyze,features], stdout=subprocess.PIPE)
+            analysisArgs.append(features)
+        if self.needsToBeTrained:
+            self.trainCorpora()
+            self.needsToBeTrained = False
+        analysisArgs.append(documentToAnalyze)
+        print("ANALYSIS",analysisArgs)
+        analyzeProcess = subprocess.Popen(analysisArgs, stdout=subprocess.PIPE)
         while(analyzeProcess.returncode == None):
             analyzeProcess.poll()
             self.__Text1.config(state=NORMAL)
@@ -310,7 +322,9 @@ class StyloGUI(Frame):
             about.__OkayButton1 = Button(about, anchor='s',justify='center', text='Okay', command=about.destroy)
             about.__OkayButton1.pack(anchor='s',side='bottom')
             return
-        trainProcess = subprocess.Popen(['python','../stylo.py', '-c', self.corpusPath.split("/")[-1], '-t'], stdout=subprocess.PIPE)
+        trainingArgs = ['python','../stylo.py', '-c', self.corpusPath.split("/")[-1], '-t']
+        print("TRAINING",trainingArgs)
+        trainProcess = subprocess.Popen(trainingArgs, stdout=subprocess.PIPE)
         while(trainProcess.returncode == None):
             trainProcess.poll()
             self.__Text1.config(state=NORMAL)
@@ -361,21 +375,41 @@ class StyloGUI(Frame):
         self.pluginsWindow.__Label1.pack(anchor='nw',side='top')
         self.pluginsWindow.__Frame2 = Frame(self.pluginsWindow)
         self.pluginsWindow.__Frame2.pack()
-        self.pluginsWindow.__Frame2.__Listbox1 = Listbox(self.pluginsWindow.__Frame2,height=10,width=40, selectmode=MULTIPLE)
+        self.pluginsWindow.__Frame2.__Listbox1 = Listbox(self.pluginsWindow.__Frame2,height=10,width=60, selectmode=NORMAL)
         self.pluginsWindow.__Frame2.__Scrollbar1 = Scrollbar(self.pluginsWindow.__Frame2)
         self.pluginsWindow.__Frame2.__Scrollbar1.pack(side=RIGHT, fill=Y, anchor='e')
         self.pluginsWindow.__Frame2.__Listbox1.pack(side=LEFT, anchor='w')
         self.pluginsWindow.__Frame2.__Scrollbar1.config(command=self.pluginsWindow.__Frame2.__Listbox1.yview)
         self.pluginsWindow.__Frame2.__Listbox1.config(yscrollcommand=self.pluginsWindow.__Frame2.__Scrollbar1.set)
         self.pluginsWindow.__Frame3 = Frame(self.pluginsWindow)
-        self.pluginsWindow.__Frame3.pack(side='bottom',padx=15,pady=15)
+        self.pluginsWindow.__Frame3.pack(side='bottom',padx=7,pady=7)
+        self.pluginsWindow.__Frame3.__Button3 = Button(self.pluginsWindow.__Frame3, text="Add A Plugin", command=self.addPlugin)
+        self.pluginsWindow.__Frame3.__Button3.pack(side=LEFT, anchor='sw')
+        self.pluginsWindow.__Frame3.__Button2 = Button(self.pluginsWindow.__Frame3, text="Remove Selected Plugin", command=self.deletePlugin)
+        self.pluginsWindow.__Frame3.__Button2.pack(side=LEFT,anchor='s')
         self.pluginsWindow.__Frame3.__Button1 = Button(self.pluginsWindow.__Frame3, text="Save Settings", command=self.setPlugins)
-        self.pluginsWindow.__Frame3.__Button1.pack(anchor='sw')
+        self.pluginsWindow.__Frame3.__Button1.pack(side=RIGHT, anchor='se')
         
         for plugin in self.plugins:
             self.pluginsWindow.__Frame2.__Listbox1.insert(END,plugin)
-            
+    
+    def addPlugin(self):
+        newPlugin = tkFileDialog.askdirectory(parent=self,initialdir='../plugins',title='Please select a plugin to add')
+        if len(newPlugin) <= 0:
+            return
+        self.pluginsWindow.__Frame2.__Listbox1.insert(END,newPlugin.split('/')[-1])
+        
+    def deletePlugin(self):
+        self.pluginsWindow.__Frame2.__Listbox1.delete(self.pluginsWindow.__Frame2.__Listbox1.curselection()[0])
+    
     def setPlugins(self):
+        self.plugins = []
+        pluginsFile = open('../enabled_plugins','w')
+        for index in range(self.pluginsWindow.__Frame2.__Listbox1.size()):
+            pluginsFile.write(self.pluginsWindow.__Frame2.__Listbox1.get(index).strip() + "\n")
+            self.plugins.append(self.pluginsWindow.__Frame2.__Listbox1.get(index).strip())
+        pluginsFile.close()
+        self.getFeatures()
         self.pluginsWindow.destroy()
 
 try:
