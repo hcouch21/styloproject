@@ -47,9 +47,10 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
             val = lin_feat.extract(sample)
 
             for result in val :
-                if result.value != correct[count] :
-                    self.fail(("%s for %s calculated value %.2f is not " +
-                                "equal to given value %.2f") % (feature_name,
+                # Account for floating point inaccuracy
+                if abs(result.value - correct[count]) > 0.0001 :
+                    self.fail(("%s for %s calculated value %f is not " +
+                                "equal to given value %f") % (feature_name,
                                 file, result.value, correct[count]))
                 count += 1
 
@@ -73,6 +74,7 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
         self.run_and_check_test("WordCount", correct)
 
     def test_ngram_freq(self):
+        # @todo Is there any good way of testing this..?
         pass
 
     def test_avg_chars_per_paragraph(self):
@@ -89,6 +91,16 @@ class  LinguisticFeaturesTestCase(unittest.TestCase):
         correct = [3.38, 4.38, 7.5, 4.17, 4.33]
 
         self.run_and_check_test("AvgSentencesPerParagraph", correct)
+
+    def test_avg_sent_length(self):
+        correct = [18.6296, 14.3429, 16.8667, 19.88, 19.4615]
+
+        self.run_and_check_test("AvgSentenceLength", correct)
+
+    def test_avg_syllables(self):
+        correct = [1.6693, 1.394, 1.3636, 1.5582, 1.5603]
+
+        self.run_and_check_test("AvgSyllables", correct)
 
 if __name__ == '__main__':
     unittest.main()
