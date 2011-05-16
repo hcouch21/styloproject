@@ -1,0 +1,39 @@
+A trait that is adaptive will obviously make the organism’s life easier, and will probably 
+allow it to survive longer and engage in prolific reproduction.  Such an organism’s 
+offspring will also find life easier than their contemporaries, and will thus find similar 
+advantages as found by their progenitor.  Pretty soon the species will come to be 
+dominated by that adaptive characteristic.
+	A maladaptive trait, on the other hand, will make life difficult or at the very least 
+annoying, and the unfortunate recipient of it will either die before having the chance to 
+reproduce in significant quantities or will be considered an unpleasant and undesirable 
+mate by the opposite gender of the species.  Either way, the maladaptation is weeded out 
+of the gene pool.  A notable exception to this would be if the harmful trait were of a 
+genetic variety that it only appears in the phenotype with monozygous representation.  In 
+that case, individuals could be un-affected carriers of the gene and not be adaptively 
+burdened with its negative effects.
+	Individual genetic variation as a factor in natural selection probably accounts for 
+the majority of anatomical adaptations, as they involve very simple, superficial changes 
+and would be more conducive to the mild variability common within a species.  I suspect 
+most physiological adaptations are the result of mutation, as they are highly complex and 
+would involve massive internal structural changes that are unlikely to occur within the 
+small range of individual variation.  Behavioral adaptations could easily be either, as they 
+range from simple reflexes to complex social interactions.
+	To illustrate the concept of evolution through natural selection, take for instance 
+the stripes on a tiger, an anatomical adaptation.  Imagine at some point in the far past 
+tigers had solid-colored fur, like lions.  In the heavily wooded environment where tigers 
+hunt, this would be rather unfortunate since their silhouette would be evident through the 
+trees even at great distance.  Prey would have no trouble spotting their stalkers long 
+before the tigers were within range.  
+Now suppose some tiger was born whose fur was slightly darker in certain 
+patches than on the rest of his body.  In certain situations, this made him harder to spot 
+through the trees because it irregularized parts of his fur.  This tiger would’ve ended up 
+with more food than his solid-colored bretheren.  He therefore would have been stronger 
+and more capable of defending his territory against challenges.  As such, he would also 
+have been more attractive to females.  Once this tiger’s offspring grew of age, they would 
+find themselves the beneficiaries of the same advantages their father had and soon these 
+dark patches would come to dominate the tiger world.
+But then another instance of genetic variation causes one tiger’s dark patches to 
+be somewhat elongated instead of just irregular in shape.  Now that all tigers have dark 
+patches, competition is again fierce, but somehow this tiger with elongated dark patches 
+never has any trouble catching food.  Being well-fed, he’s stronger than the others and 
+better able to defend himself.  

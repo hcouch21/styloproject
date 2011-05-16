@@ -1,0 +1,36 @@
+** A percentile score shows how your child would score compared to a randomly selected group of 100 same age peers. (Ex. A child who scores at the 53% would probably do better than 53 out of the 100 students.)
+***Confidence Interval scores tell you the range of scores that a student is likely to score in if given the same test multiple times. (Ex. A child with a Confidence Interval score of 84-96 means that 95 percent of the time, a students score would fall somewhere between 84 and 96.)
+Full-Scale IQ (STUDENT’s standard score is 91)
+?	Is calculated based on the ten subtests of the standard battery 
+?	Is often the best single predictor of overall school achievement
+Similarities (STUDENT’s standard score is 13)
+?	Assesses the ability to determine the common elements of two verbally presented terms together as a concept
+?	The examinee much organize, abstract, and find relationships that are not initially obvious
+Vocabulary (STUDENT’s standard score is 7)
+?	Assesses word knowledge as well as several cognitive factors such as learning ability, fund of information, and richness of ideas, memory, concept formation, and language development
+?	Performance on this subtest is often closely related to the examinee’s educational experiences and environment
+Comprehension (STUDENT’s standard score is 9)
+?	Assesses the ability to understand given situations and to provide appropriate answers to specific problems
+?	It requires the ability to draw upon previously learned knowledge of social conventions as well as practical information
+Verbal Comprehension Composite (STUDENT’s standard score is 98) 
+?	Includes the Similarities, Vocabulary and Comprehension subtests
+?	Is a measure of verbal concept formation, verbal reasoning and knowledge acquired from one’s environment
+Block Design (STUDENT’s standard score is 14)	
+?	Assesses visual organization and visual-motor coordination
+?	It is a nonverbal concept formulation task that requires perceptual organization, spatial visualization, and abstract conceptualization
+Picture Concepts (STUDENT’s standard score is 14)
+?	Provides a measurement of nonverbal reasoning using pictorial cues
+Matrix Reasoning (STUDENT’s standard score is 7)
+?	Assesses perceptual reasoning and has no motor component
+?	Good performance requires analogic reasoning, attention to detail and concentration
+Perceptual Reasoning Composite (STUDENT’s standard score is 110)
+?	Includes the Block Design, Picture Concepts and Matrix Reasoning subtests
+?	Is a measure of perceptual and fluid reasoning, spatial processing and visual-motor integration
+Digit Span (STUDENT’s standard score is 7)
+?	Provides a measurement of the examinee’s short-term sequential auditory memory and attention
+?	Digits forward assesses rote learning and memory while digits backwards assesses more complex cognitive reasoning
+Letter/Number Sequencing (STUDENT’s standard score is 4)
+?	Measures working memory and, more specifically, assesses attention, short-term auditory memory, and information processing
+Working Memory Composite (STUDENT’s standard score is 83)
+?	Includes the Digit Span and Letter/Number Sequencing subtests
+?	Provides a measure of working memory abilities and require the ability to temporarily retain information in memory, perform some operation or manipulation with it, and produce a result
