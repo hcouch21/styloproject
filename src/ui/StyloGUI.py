@@ -307,7 +307,7 @@ class StyloGUI(Frame):
         analysisArgs.append('-i')
         analysisArgs.append(documentToAnalyze)
         self.__Text1.insert(END, "PERFORMING ANALYSIS. STYLO WILL LOCK UNTIL THE PROCESS IS COMPLETE")
-        print("ANALYSIS",analysisArgs)
+        #print("ANALYSIS",analysisArgs)
         analyzeProcess = subprocess.Popen(analysisArgs, stdout=subprocess.PIPE)
         while(analyzeProcess.returncode == None):
             analyzeProcess.poll()
