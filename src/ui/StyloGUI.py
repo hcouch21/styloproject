@@ -75,7 +75,7 @@ class StyloGUI(Frame):
         toolsmenu.add_command(label="Create A New Corpus", command=self.newCorpus)
         toolsmenu.add_command(label="Delete This Corpus", command=self.deleteCorpus)
         helpmenu = Menu(menubar, tearoff=0)
-        helpmenu.add_command(label="Help", command=self.openHelp)
+        #helpmenu.add_command(label="Help", command=self.openHelp)
         helpmenu.add_command(label="About",command=self.openAbout)
         menubar.add_cascade(label="File", menu=filemenu)
         menubar.add_cascade(label="Tools", menu=toolsmenu)
@@ -113,10 +113,10 @@ class StyloGUI(Frame):
     
     def getFeatures(self):
         self.features = []
-        analyzeProcess = subprocess.Popen(['python','../stylo.py', '-l'], stdout=subprocess.PIPE)
-        while(analyzeProcess.returncode == None):
-            analyzeProcess.poll()
-            newFeature = analyzeProcess.communicate()[0].split('\n')
+        featuresProcess = subprocess.Popen(['python','../stylo.py', '-l'], stdout=subprocess.PIPE)
+        while(featuresProcess.returncode == None):
+            featuresProcess.poll()
+            newFeature = featuresProcess.communicate()[0].split('\n')
             for feature in newFeature:
                 if len(feature.strip('\r')) > 0:
                     self.features.append(feature.strip('\r'))
@@ -295,15 +295,18 @@ class StyloGUI(Frame):
         analysisArgs = ['python','../stylo.py', '-c', self.corpusPath.split("/")[-1]]
         
         if len(self.featuresSelected) > 0:
-            features = "-f"
+            features = "-f "
             for feature in self.featuresSelected:
-                features += " " + str(feature) + ","
-            analysisArgs.append(features)
+                features += str(feature)+","
+            #print "FEATURES STRING",features[0:-1]
+            analysisArgs.append(features[0:-1])
         if self.needsToBeTrained:
-            self.trainCorpora()
+            self.trainCorpora(features[0:-1])
             self.needsToBeTrained = False
+        analysisArgs.append('-i')
         analysisArgs.append(documentToAnalyze)
-        print("ANALYSIS",analysisArgs)
+        self.__Text1.insert(END, "PERFORMING ANALYSIS. STYLO WILL LOCK UNTIL THE PROCESS IS COMPLETE")
+        #print("ANALYSIS",analysisArgs)
         analyzeProcess = subprocess.Popen(analysisArgs, stdout=subprocess.PIPE)
         while(analyzeProcess.returncode == None):
             analyzeProcess.poll()
@@ -312,9 +315,10 @@ class StyloGUI(Frame):
             self.__Text1.config(state=DISABLED)
         self.__Text1.config(state=NORMAL)
         self.__Text1.insert(END,"\nANALYSIS COMPLETE!\n")
+        self.__Text1.see(END)
         self.__Text1.config(state=DISABLED)
         
-    def trainCorpora(self):
+    def trainCorpora(self,features):
         if(self.corpusPath ==""):
             about = Toplevel()
             about.__Label1 = Label(about,anchor='nw',justify='left', padx=15,pady=15 ,text='A corpus must be selected before it can be trained on!')
@@ -323,7 +327,9 @@ class StyloGUI(Frame):
             about.__OkayButton1.pack(anchor='s',side='bottom')
             return
         trainingArgs = ['python','../stylo.py', '-c', self.corpusPath.split("/")[-1], '-t']
-        print("TRAINING",trainingArgs)
+        if(features):
+            trainingArgs.append(features)
+        #print("TRAINING",trainingArgs)
         trainProcess = subprocess.Popen(trainingArgs, stdout=subprocess.PIPE)
         while(trainProcess.returncode == None):
             trainProcess.poll()
@@ -343,23 +349,26 @@ class StyloGUI(Frame):
         self.featureSelect = Toplevel()
         self.featureSelect.__Label1 = Label(self.featureSelect,anchor='nw',justify='left', padx=15,pady=15 ,text='Select the features to be analyzed.')
         self.featureSelect.__Label1.pack(anchor='nw',side='top')
-
+        self.selectedFeatures = []
         for featureIndex in range(len(self.features)):
             featureVar = IntVar()
             checkBox = Checkbutton(self.featureSelect, text=self.features[featureIndex], variable=featureVar, offvalue=0, onvalue=featureIndex+1)#Default offvalue is 1, so add 1 to 1-index the list
+            if self.featuresSelected.count(self.features[featureIndex].split('-')[0].strip()) > 0:
+                checkBox.select()
             checkBox.pack(anchor='w')
-            self.featuresSelected.append(featureVar)
+            self.selectedFeatures.append(featureVar)
         
         self.featureSelect.__Button1 = Button(self.featureSelect, text="Okay", command=self.setFeatures)
         self.featureSelect.__Button1.pack()
         
     def setFeatures(self):
-        self.featureSelect.destroy()
-        self.featuresSelected = filter(self.isEmpty, self.featuresSelected)
+        self.selectedFeatures = filter(self.isEmpty, self.selectedFeatures)
         newfeatures = []
-        for feature in self.featuresSelected:
+        for feature in self.selectedFeatures:
             newfeatures.append(self.features[feature.get() - 1].split('-')[0].strip())
         self.featuresSelected = newfeatures
+        self.needsToBeTrained = True
+        self.featureSelect.destroy()
 	
     def isEmpty(self, var):
         if var.get() <= 0:
