@@ -1,0 +1,18 @@
+Neptune As It Relates To Chemistry
+	Currently there is a debate on who should be given credit for the discovery of Neptune (named after the Roman god of the Sea, Wikipedia.org); according to Wikipedia.org the debate is between the British mathematician John Couch Adams and the French mathematician Urbain Jean Joseph Le Ve. Not without reason since both are given credit for the discovery of the methane-colored planet. Neptune occuppies the eighth place in relation to the sun and thanks to Pluto’s abnormal orbit it is sometimes the furthest planet from it. Specifically, as said by Daniel Durda: “30 AU (Astronomical Units: the average Earth-Sun separation)”. Neptune apart from being a continuous mystery for the scientists in the world can be analyzed in depth by chemical but perhaps elementary means.
+	Neptune itself is said to have had 13 satellites (according to Wikpedia.org: Naiad, Thalassa , Despina , Galatea , Larissa , Proteus , Triton , Nereid, S/2002 N 1,  S/2002 N 2, S/2002 N 3, S/2003 N 1, and S/2002 N 4), however recently five more for a total of 17 were discovered: “Two moons orbit in the normal forward direction, three go backward. Their orbital periods range between 5 and 25 years.” (R.B.).  The article also gave detail on the origin of these new moons : “Holman and team suggest the Neptunian bodies are remnants of a former moon system scattered by Triton and Nereid, Neptune's largest moons.”
+	Neptune is continuingly compared to Uranus since they are both, what scientists refer to as “gas giants”. In other words, as Wikipedia quotes:
+“The internal structure resembles that of Uranus. There is likely to be a core consisting of (molten) rock and metal, surrounded by a mixture of rock, water, ammonia, and methane. The atmosphere, extending perhaps 10 to 20 percent of the way towards the center, is mostly hydrogen and helium at high altitudes, but has increasing concentrations of methane, ammonia, and water as it approaches and finally blends into the liquid interior. Comparing its rotational speed to its degree of oblateness indicates that it has its mass less concentrated towards the center than does Uranus.”
+	According to NASA Neptune’s atmosphere is composed of  (by volume, uncertainty in parentheses):
+Major:
+- 80.0% Molecular hydrogen (H2) (3.2%).
+- 19.0% Helium (He) (3.2%).
+1.5% Methane (CH4) (0.5%).
+Minor (ppm): 
+- 192 Hydrogen Deuteride (HD).
+- 1.5 Ethane (C2H6). 
+Aerosols:    Ammonia ice, water ice, ammonia hydrosulfide, methane ice (?)
+Neptune is a substantially cold planet with surface temperatures of -218 C (NASA). In other words, by utilizing the formula to convert Celsius to Kelvin +273 K can be added to that and 55 K result (General Chemistry). One difference from Uranus is perhaps Neptune’s weather. Neptune’s wind speeds range from 0 to 200 m/s (meters per second) and its density equals 0.43 kg/m3 (kilograms per meter cubed). 
+By utilizing dimensional analysis we can find the above figure in g/cm3 or g/mL (grams per centimeter cubed or grams per milliliter cubed).
+0.43  kg 
+1000 g

@@ -1,0 +1,46 @@
+Dot Locations
+?	This subtest assesses the ability to learn the spatial location of an array of dots over three learning trials.
+?	In the immediate portion, presentation and recall of the learning trials are followed by a single presentation and recall of a distractor array, then recall of the first dot array. 
+?	In the delayed portion, the examinee is asked to recall the dot array presented earlier.
+Faces
+?	This subtest assesses the ability to remember and recognize a series of faces. 
+?	In the immediate portion, the examinee is presented with a series of faces and asked to remember them.
+?	For both the immediate and delayed portions, the examinee is shown the same faces along with distractor faces and asked to identify each face as either a face he or she was asked to remember of a new one.
+Comprehensive Test of Phonological Processing (CTOPP)
+	The CTOPP is a series of individually administered tasks that evaluate skills considered to underlie success in beginning reading. A students's score on these subtests are grouped into composite scores in Phonological Awareness, Phonological Memory, and Rapid Naming that provide a general estimate of that students's strengths and weaknesses and that are used to help develop individualized strategies for reading instruction. Many other factors besides phonological skills, such as general cognitive ability, motivation, overall health, a supportive home environment, and general temperament also contribute to reading success. As in any activity, performance may vary from day to day and that variation may sometimes be significant.
+Clusters are in boldface type.
+Subtest/Composite
+Standard Score*
+Percentile**
+Elision
+13
+84
+Blending Words
+8
+25
+Phonological Awareness
+103
+58
+Memory for Digits
+9
+37
+Nonword Repetition
+10
+50
+Phonological Memory
+97
+42
+*Standard scores are based on an average score of 100 for composites and 10 for subtests. Scores from 90-110 for composites and 8-12 for subtests are considered to be within the Average range.
+** A percentile score shows how your child would score compared to a randomly selected group of 100 same age peers. (Ex. A child who scores at the 53% would probably do better than 53 out of the 100 students.)
+Phonological Awareness Composite (STUDENT's standard score is 103)
+?	Includes
+?	Ellision: Requires the student to remove phonological segments from spoken words to form another word (Ex: say “homework” without saying “home”, or say “stone” without the “s”)
+?	Blending Words: Requires the student to blend a series of sounds to make a word (Ex: blend “c”, “a”,”t” to get “cat”)
+?	Measures awareness of and access to the phonological structure of oral language
+?	Includes understanding words, syllables, and individual sounds within syllables and consonant clusters are separate units
+?	Includes ability to identify and manipulate individual sounds
+?	Is an important tool for understanding relations between written and spoken language
+?	A deficit in phonological awareness is typical of students with a reading deficit 
+Phonological Memory Composite (STUDENT's standard score is 97)
+?	Includes
+?	Memory for Digits: Student repeats strings of numbers correctly

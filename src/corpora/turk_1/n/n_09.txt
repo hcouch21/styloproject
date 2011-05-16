@@ -1,0 +1,94 @@
+?	Nonword Repetition: Student repeats nonsense words correctly
+?	Measures ability to store orally presented phonological information in working memory
+?	Is affected by working memory difficulties
+?	Deficit suggests difficulty decoding new words, particularly longer words
+?	Low score suggests difficulty in reading and listening comprehension for longer or more complex sentences
+
+Wechsler Individual Achievement Test- Second Edition 
+The Wechsler Individual Achievement Test- Second Edition (WIAT-II) is a comprehensive, individually administered test for assessing the achievement of children, adolescents, college and adults in the areas of Reading, Mathematics, Written Language and Oral Language. Any test is a sample of that child’s performance on that particular day and results would probably vary slightly from one test administration to the next.
+Subtest
+Standard Score*
+Age Based
+Percentile**
+Reading Comprehension
+82
+37	
+* Standard scores are based on an average score of 100. Scores from 90-109 are considered to be in the Average range.
+** A percentile score shows how your child would score compared to a randomly selected group of 100 same age peers. (Ex. A child who scores at the 53% would probably do better than 53 out of the 100 students.)
+Reading Comprehension (STUDENT’s standard score is 82)
+?	Requires a student to match a written word with its representative picture, read passages and answer content questions and read short sentences aloud, and respond to comprehension questions
+?	This subtest reflects reading instruction in the classroom
+Behavior Assessment System for Children (BASC) Teacher Rating Scales (BASC-TRS) and Parent Rating Scales (BASC-PRS)
+	The BASC rating scales ask parents or teachers to rate a child's observable behaviors on a scale of Never, Sometimes, Often or Almost Always. Individual items are grouped for Composite scores. Scores above 60, or for the Adaptive Skills Composite, below 40, are considered at risk and are in boldface. Clinically significant scores are above 70 or for adaptive skills, below 30, are in boldface with an asterisk. 
+Scale/Composite
+Classroom Teacher
+Parents
+Hyperactivity
+49
+69*
+Aggression
+46
+77*
+Conduct Problems
+49
+70
+Externalizing Problems Composite
+48
+75*
+Anxiety
+52
+59
+Depression
+79*
+64
+Somatization
+43
+59
+Internalizing Problems Composite
+60
+63
+Attention Problems
+66
+61
+Learning Problems
+58
+---
+School Problems Composite
+63
+---
+Atypicality
+46
+94*
+Withdrawal
+63
+53
+Adaptability
+29*
+28*
+Social Skills
+29*
+37
+Leadership
+39
+44
+Study Skills
+34
+---
+Activities of Daily Living
+---
+31
+Functional Communication
+42
+28*
+Adaptive Skills Composite
+33
+31
+Behavioral Symptoms Index
+60
+75*
+Explanations of categories on the BASC-TRS and on the BASC-PRS are:
+?	Hyperactivity: the tendency to be overly active, rush through work or activities, and act without thinking
+?	Aggression: the tendency to act in a hostile manner. Either verbal or physical. That is threatening to others
+?	Conduct Problems: the tendency to engage in anti-social and rule-breaking behavior, including destroying property
+?	Anxiety: the tendency to be nervous, fearful or worried about real or imagined problems
+?	Depression: feelings of unhappiness, sadness, and stress that may result in an inability to carry about everyday activities

@@ -1,0 +1,68 @@
+Coding (STUDENT’s standard score is 4)
+?	Assesses the ability to learn an unfamiliar task and requires speed and accuracy of visual-motor coordination, processing speed, attention skills, visual acuity, visual scanning and visual tracking
+?	This is a timed, pen and pencil task
+Symbol Search (STUDENT’s standard score is 10)
+?	Assesses perceptual discrimination, speed and accuracy
+?	This is a timed, pen and pencil task
+Processing Speed Composite (STUDENT’s standard score is 83)
+?	Includes the Coding and Symbol Search subtests
+?	Provides a measure of the child’s ability to quickly and correctly scan, sequence, or discriminate simple visual information
+?	This composite also measures short-term visual memory, attention, and visual-motor coordination
+Children's Memory Scale
+The Children's Memory Scale (CMS) is a comprehensive learning and memory assessment designed to evaluate learning and memory functioning in individuals ages 5 through 16. The nine subtests are grouped into three domains which are combined to achieve a General Memory Index and is a general estimate of that student’s abilities related to memory and learning. As in any other activity, performance may vary from day to day and that variation may sometimes be significant. 
+Composites are in boldface type. 
+Subtest/Index
+Standard Score *
+Percentile Rank **
+General Memory Index
+88
+21
+Dot Locations: Total Score
+9
+37
+Faces: Immediate
+10
+50
+Visual Immediate Index
+97
+42
+Dot Locations: Long Delay
+10
+50
+Faces: Delayed
+9
+37
+Visual Delayed Index
+97
+42
+Stories: Immediate
+9
+37
+Word Pairs: Total Score
+5
+5
+Verbal Immediate Index
+82
+12
+Stories: Delayed
+8
+25
+Word Pairs: Long Delay
+9
+37
+Verbal Delayed Index
+91
+27
+*Standard scores are based on an average score of 100 for composites and 10 for subtests. Scores from 90-109 for composites and 9-11 for subtests are considered to be within the Average range.
+** A percentile score shows how your child would score compared to a randomly selected group of 100 same age peers. (Ex. A child who scores at the 53% would probably do better than 53 out of the 100 students.)
+General Memory Index (STUDENT’s standard score is 88)
+?	Is calculated based on the subtest scores that make up the immediate and delayed auditory/verbal and visual/nonverbal indexes.
+?	It can be looked on as a global measure of memory function
+Stories
+?	This subtest assesses the ability to recall  meaningful and sematically related verbal material.
+?	In the immediate portion, two stories are read by the examiner, and the examinee is asked to retell the stories from memory.
+?	In the delayed portion, the examinee is asked to retell the stories from memory.
+Word Pairs 
+?	This subtest assesses the ability to learn a list of word pairs over three learning trials.
+?	In the immediate portion, the examiner reads a list of word pairs aloud, then reads the first word of each pair and askes the examinee to provide the second word from memory.
+?	In the delayed portion, the examinee is asked to provide the word pairs from memory.
