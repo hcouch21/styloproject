@@ -295,7 +295,8 @@ class StyloGUI(Frame):
         analysisArgs = ['python','../stylo.py', '-c', self.corpusPath.split("/")[-1]]
         
         if len(self.featuresSelected) > 0:
-            features = "-f "
+            analysisArgs.append('-f')
+            features = ""
             for feature in self.featuresSelected:
                 features += str(feature)+","
             #print "FEATURES STRING",features[0:-1]
@@ -306,7 +307,7 @@ class StyloGUI(Frame):
         analysisArgs.append('-i')
         analysisArgs.append(documentToAnalyze)
         self.__Text1.insert(END, "PERFORMING ANALYSIS. STYLO WILL LOCK UNTIL THE PROCESS IS COMPLETE")
-        #print("ANALYSIS",analysisArgs)
+        print("ANALYSIS",analysisArgs)
         analyzeProcess = subprocess.Popen(analysisArgs, stdout=subprocess.PIPE)
         while(analyzeProcess.returncode == None):
             analyzeProcess.poll()
@@ -328,6 +329,7 @@ class StyloGUI(Frame):
             return
         trainingArgs = ['python','../stylo.py', '-c', self.corpusPath.split("/")[-1], '-t']
         if(features):
+            trainingArgs.append('-f')
             trainingArgs.append(features)
         #print("TRAINING",trainingArgs)
         trainProcess = subprocess.Popen(trainingArgs, stdout=subprocess.PIPE)
@@ -349,18 +351,32 @@ class StyloGUI(Frame):
         self.featureSelect = Toplevel()
         self.featureSelect.__Label1 = Label(self.featureSelect,anchor='nw',justify='left', padx=15,pady=15 ,text='Select the features to be analyzed.')
         self.featureSelect.__Label1.pack(anchor='nw',side='top')
+        self.featureSelect.__Button1 = Button(self.featureSelect, anchor='w',justify='center', text='Select All', command=self.selectAllFeatures)
+        self.featureSelect.__Button1.pack(anchor='w')
+        self.featureSelect.__Button2 = Button(self.featureSelect,justify='center', text='Select None', command=self.selectNoFeatures)
+        self.featureSelect.__Button2.pack(anchor='w')
         self.selectedFeatures = []
+        self.featureSelect.checkBoxes = []
         for featureIndex in range(len(self.features)):
             featureVar = IntVar()
             checkBox = Checkbutton(self.featureSelect, text=self.features[featureIndex], variable=featureVar, offvalue=0, onvalue=featureIndex+1)#Default offvalue is 1, so add 1 to 1-index the list
             if self.featuresSelected.count(self.features[featureIndex].split('-')[0].strip()) > 0:
                 checkBox.select()
             checkBox.pack(anchor='w')
+            self.featureSelect.checkBoxes.append(checkBox)
             self.selectedFeatures.append(featureVar)
         
-        self.featureSelect.__Button1 = Button(self.featureSelect, text="Okay", command=self.setFeatures)
-        self.featureSelect.__Button1.pack()
+        self.featureSelect.__Button3 = Button(self.featureSelect, text="Okay", command=self.setFeatures)
+        self.featureSelect.__Button3.pack()
         
+    def selectAllFeatures(self):
+        for checkBox in self.featureSelect.checkBoxes:
+            checkBox.select()
+            
+    def selectNoFeatures(self):
+        for checkBox in self.featureSelect.checkBoxes:
+            checkBox.deselect()
+    
     def setFeatures(self):
         self.selectedFeatures = filter(self.isEmpty, self.selectedFeatures)
         newfeatures = []
