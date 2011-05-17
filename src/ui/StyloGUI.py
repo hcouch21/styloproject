@@ -294,9 +294,9 @@ class StyloGUI(Frame):
             return
         analysisArgs = ['python','../stylo.py', '-c', self.corpusPath.split("/")[-1]]
         
+        features = ""
         if len(self.featuresSelected) > 0:
             analysisArgs.append('-f')
-            features = ""
             for feature in self.featuresSelected:
                 features += str(feature)+","
             #print "FEATURES STRING",features[0:-1]
@@ -328,7 +328,7 @@ class StyloGUI(Frame):
             about.__OkayButton1.pack(anchor='s',side='bottom')
             return
         trainingArgs = ['python','../stylo.py', '-c', self.corpusPath.split("/")[-1], '-t']
-        if(features):
+        if(features != ""):
             trainingArgs.append('-f')
             trainingArgs.append(features)
         #print("TRAINING",trainingArgs)
