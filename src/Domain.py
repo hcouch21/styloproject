@@ -213,6 +213,16 @@ class Author(object):
     def __str__(self):
         return "%s - %d samples" % (self.name, len(self.samples))
 
+def init_nltk(clazz):
+    """ Initialize path to NLTK so that resource files do not
+        need to be loaded directly.
+    """
+    directory = os.path.dirname(__file__)
+    nltk.data.path.insert(0, directory + "/resources")
+
+    return clazz
+
+@init_nltk
 class Sample(object):
     """Stores data and state of a sample document
     
@@ -231,16 +241,18 @@ class Sample(object):
     plain_text = None
     nltk_text = None
 
-    def __init__(self, path, name=None):
+    def __init__(self, path, name=None, plain_text=None):
         if name is not None:
             self.name = name
             self.path = path + name
         else:
             self.name = os.path.basename(path)
             self.path = path
-
-        with open(self.path, "r") as f:
-            self.plain_text = (f.read().decode('latin-1')).encode('utf-8')
+	if plain_text is None:
+            with open(self.path, "r") as f:
+                self.plain_text = (f.read().decode('latin-1')).encode('utf-8')
+	else:
+            self.plain_text = plain_text
 
         tokenized = []
         for sentence in nltk.sent_tokenize(self.plain_text) :
