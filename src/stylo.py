@@ -177,16 +177,17 @@ if __name__ == "__main__":
     
     parser = OptionParser()
     parser.add_option("-c", "--corpus", help="Specify a corpus")
+    parser.add_option("-d", "--decrypt", action="store_true", help="Decrypt the specified corpus.")
+    parser.add_option("-e", "--encrypt", action="store_true", help="Encrypt the specified corpus.")
     parser.add_option("-f", "--features", help="Specify a list of features to use (semicolon delimited)")
     parser.add_option("-i", "--input", help="Path to input directory or file")
+    parser.add_option("-k", "--key", help="Key to use for encryption or decryption of corpus.")
     parser.add_option("-l", "--list-features", action="store_true", help="Lists all available features")
-    parser.add_option("-t", "--train", action="store_true", help="Train Stylo against specified corpus")
+    parser.add_option("-n", "--no-clean", action="store_true", help="Tells Stylo not to remove temporary files")
+    parser.add_option("-o", "--output", help="Specify the file or folder to output to.")
     parser.add_option("-p", "--pickle", action="store_true", help="Output pickled version of the results")
     parser.add_option("-P", "--plugins", help="Specify plugins to enable/disable")
-    parser.add_option("-e", "--encrypt", action="store_true", help="Encrypt the specified corpus.")
-    parser.add_option("-d", "--decrypt", action="store_true", help="Decrypt the specified corpus.")
-    parser.add_option("-k", "--key", help="Key to use for encryption or decryption of corpus.")
-    parser.add_option("-o", "--output", help="Specify the file or folder to output to.")
+    parser.add_option("-t", "--train", action="store_true", help="Train Stylo against specified corpus")
 
     (options, args) = parser.parse_args()
 
