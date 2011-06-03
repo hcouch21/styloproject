@@ -93,6 +93,7 @@ class Corpus(object):
             self.decompress()
         
         author_names = os.listdir(self.path)
+        author_names.sort()
 
         try:
             author_names.remove("stylo")
