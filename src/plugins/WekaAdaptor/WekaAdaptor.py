@@ -226,7 +226,9 @@ class WekaAdaptor(PlugIn, ClassifyStart, TrainStart):
                           "-t", state.corpus.path + "stylo/training-weka.arff",
                           "-T", "classify_data.arff", "-c", "first", "-p",
                           "0"],  stdout=PIPE).communicate()[0]
-        os.remove("classify_data.arff")
+        
+        if not state.options.no_clean:
+            os.remove("classify_data.arff")
 
         # Classify each sample
         count = 0
