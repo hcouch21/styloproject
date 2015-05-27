@@ -1,0 +1,1 @@
+Stylo is a stylometry tool developed in conjunction with the Anonymouth tool.
